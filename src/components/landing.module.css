@@ -1,0 +1,365 @@
+.main {
+  max-width: 1536px;
+  margin: auto;
+  padding: 52px 46px 26px;
+}
+.intro {
+  display: grid;
+  grid-template-columns: 1.05fr 1.2fr 0.88fr;
+  gap: 48px;
+  align-items: start;
+  min-height: 404px;
+}
+.copy {
+  padding-top: 17px;
+}
+.copy h1 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(42px, 4vw, 65px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -2px;
+  margin: 5px 0 26px;
+}
+.copy p {
+  font-size: 17px;
+  line-height: 1.8;
+  max-width: 425px;
+  margin: 0;
+}
+.dropzone {
+  min-height: 339px;
+  border: 1.5px dashed var(--blue);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 18px 24px;
+  background: #fcfdff;
+  transition: background 0.2s;
+}
+.drag {
+  background: #eaf2ff;
+}
+.uploadIcon {
+  height: 94px;
+  position: relative;
+  color: var(--blue);
+  margin-bottom: 11px;
+}
+.cloud {
+  position: absolute;
+  top: 41px;
+  left: 19px;
+  background: #fcfdff;
+}
+.dropzone h2 {
+  font-size: 19px;
+  letter-spacing: -0.3px;
+  margin: 9px 0;
+}
+.fileHint {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 0 0 20px;
+}
+.privacy {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted);
+  margin: 25px 0 4px;
+}
+.sampleLink {
+  border: 0;
+  background: none;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  margin: 14px auto;
+  color: var(--blue);
+  min-height: 44px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.steps {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+.steps li {
+  display: grid;
+  grid-template-columns: 33px 36px 1fr;
+  gap: 16px;
+  padding: 20px 0 26px;
+  border-bottom: 1px solid var(--line);
+}
+.steps li:first-child {
+  padding-top: 10px;
+}
+.steps li:last-child {
+  border: 0;
+}
+.steps h2 {
+  font-size: 17px;
+  line-height: 1.4;
+  margin: 0 0 8px;
+}
+.steps p {
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+}
+.stepNumber {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 33px;
+  height: 33px;
+  border: 1px solid var(--blue);
+  border-radius: 50%;
+  color: var(--blue);
+  font-size: 20px;
+}
+.preview {
+  margin-top: 20px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.previewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 26px;
+  border-bottom: 1px solid var(--line);
+}
+.previewHeader h2 {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 600;
+}
+.previewHeader span {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.previewGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.previewCell {
+  padding: 13px 10px 12px;
+  border-right: 1px solid var(--line);
+  min-width: 0;
+}
+.previewCell:last-child {
+  border: 0;
+}
+.previewCell h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0 12px 14px;
+}
+.previewPage {
+  height: 198px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: #fff;
+}
+.previewPage canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin-top: -12px;
+}
+.previewNote {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  padding: 11px;
+  background: #fafbfd;
+  border-top: 1px solid var(--line);
+}
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  margin-top: 29px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.dropzone :global(.button) {
+  min-width: 220px;
+  min-height: 54px;
+  font-size: 17px;
+}
+.dropzone h2 {
+  font-weight: 600;
+}
+.previewHeader h2 {
+  font-weight: 600;
+}
+@media (min-width: 1400px) {
+  .main {
+    padding-top: 54px;
+  }
+  .dropzone {
+    min-height: 358px;
+  }
+  .intro {
+    gap: 54px;
+  }
+  .previewPage {
+    height: 217px;
+  }
+  .steps h2 {
+    font-size: 18px;
+  }
+  .steps p {
+    font-size: 17px;
+  }
+  .privacy {
+    font-size: 14px;
+  }
+}
+@media (max-width: 1150px) {
+  .main {
+    padding: 36px 26px;
+  }
+  .intro {
+    gap: 26px;
+    grid-template-columns: 1fr 1.1fr;
+  }
+  .steps {
+    grid-column: 1/-1;
+    display: flex;
+    gap: 25px;
+  }
+  .steps li {
+    flex: 1;
+    border: 0;
+    grid-template-columns: 30px 1fr;
+    gap: 12px;
+  }
+  .steps li > svg {
+    display: none;
+  }
+  .steps li:first-child {
+    padding-top: 20px;
+  }
+  .copy h1 {
+    font-size: 55px;
+  }
+  .preview {
+    margin-top: 0;
+  }
+  .previewPage {
+    height: 155px;
+  }
+}
+@media (max-width: 680px) {
+  .main {
+    padding: 26px 18px;
+  }
+  .intro {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+  .copy {
+    padding: 0;
+  }
+  .copy h1 {
+    font-size: 45px;
+    letter-spacing: -1.5px;
+    line-height: 1.15;
+    margin: 6px 0 18px;
+  }
+  .copy h1 br {
+    display: none;
+  }
+  .copy p {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .dropzone {
+    min-height: 310px;
+  }
+  .steps {
+    display: block;
+    margin: 0;
+  }
+  .steps li {
+    padding: 16px 0 !important;
+    grid-template-columns: 30px 1fr;
+    border-bottom: 1px solid var(--line);
+  }
+  .steps h2 {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+  .steps p {
+    font-size: 14px;
+  }
+  .preview {
+    margin-top: 27px;
+  }
+  .previewHeader {
+    padding: 17px;
+  }
+  .previewHeader h2 {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .previewHeader span {
+    display: none;
+  }
+  .previewGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .previewCell:nth-child(2) {
+    border-right: 0;
+  }
+  .previewCell:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+  .previewCell h3 {
+    font-size: 12px;
+    margin: 0 0 10px;
+    gap: 5px;
+  }
+  .previewPage {
+    height: 140px;
+  }
+  .previewNote {
+    align-items: flex-start;
+    font-size: 10px;
+    line-height: 1.5;
+    padding: 12px;
+  }
+  .previewNote svg {
+    flex-shrink: 0;
+  }
+  .footer {
+    font-size: 12px;
+    line-height: 1.6;
+    align-items: flex-start;
+    padding: 0 5px;
+  }
+  .footer svg {
+    flex-shrink: 0;
+  }
+}

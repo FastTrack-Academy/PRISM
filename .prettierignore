@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+.npm-cache
+.validation-python
+public/vendor
+code resource
+PLAN.md
+package-lock.json
+next-env.d.ts

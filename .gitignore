@@ -1,0 +1,11 @@
+node_modules/
+.npm-cache/
+.validation-python/
+.next/
+out/
+public/vendor/
+*.tsbuildinfo
+test-results/
+playwright-report/
+.netlify/
+.env*
