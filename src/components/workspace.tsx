@@ -351,11 +351,18 @@ function Viewer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doc, record.analysis, mode, key]);
   const a = record.analysis;
-  const box =
-    issue?.kind === 'color'
-      ? a.regions[issue.regionIds.reduce((x, y) => (a.regions[x].area < a.regions[y].area ? x : y))]
-          .box
-      : issue?.box;
+  const pairedRegions = issue?.kind === 'color' ? issue.regionIds.map((id) => a.regions[id]) : [];
+  const textBox = issue?.kind === 'text' ? issue.box : undefined;
+  const issueNumber = issue ? a.issues.indexOf(issue) + 1 : null;
+  const connector =
+    pairedRegions.length === 2
+      ? {
+          x1: pairedRegions[0].box.x + pairedRegions[0].box.width / 2,
+          y1: pairedRegions[0].box.y + pairedRegions[0].box.height / 2,
+          x2: pairedRegions[1].box.x + pairedRegions[1].box.width / 2,
+          y2: pairedRegions[1].box.y + pairedRegions[1].box.height / 2,
+        }
+      : null;
   return (
     <div className={styles.viewer}>
       <div className={styles.viewerTitle}>
@@ -413,17 +420,48 @@ function Viewer({
               <span>‹ ›</span>
             </div>
           )}
-          {box && (
+          {connector && (
+            <svg
+              className={styles.issueConnector}
+              viewBox={`0 0 ${a.width} ${a.height}`}
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <line x1={connector.x1} y1={connector.y1} x2={connector.x2} y2={connector.y2} />
+            </svg>
+          )}
+          {pairedRegions.map((region, index) => (
+            <div
+              key={region.id}
+              className={styles.issueOutline}
+              style={{
+                left: `${(region.box.x / a.width) * 100}%`,
+                top: `${(region.box.y / a.height) * 100}%`,
+                width: `${(region.box.width / a.width) * 100}%`,
+                height: `${(region.box.height / a.height) * 100}%`,
+              }}
+              aria-hidden="true"
+            >
+              <span
+                style={index === 1 ? { top: 'auto', bottom: '-15px', left: '-14px' } : undefined}
+              >
+                {issueNumber}
+                {index === 0 ? 'A' : 'B'}
+              </span>
+            </div>
+          ))}
+          {textBox && (
             <div
               className={styles.issueOutline}
               style={{
-                left: `${(box.x / a.width) * 100}%`,
-                top: `${(box.y / a.height) * 100}%`,
-                width: `${(box.width / a.width) * 100}%`,
-                height: `${(box.height / a.height) * 100}%`,
+                left: `${(textBox.x / a.width) * 100}%`,
+                top: `${(textBox.y / a.height) * 100}%`,
+                width: `${(textBox.width / a.width) * 100}%`,
+                height: `${(textBox.height / a.height) * 100}%`,
               }}
+              aria-hidden="true"
             >
-              <span>{a.issues.indexOf(issue!) + 1}</span>
+              <span>{issueNumber}</span>
             </div>
           )}
           {busy && (
@@ -502,7 +540,8 @@ export default function Workspace() {
     [inspectorOpen, setInspectorOpen] = useState(true);
   const dialog = useRef<HTMLDialogElement>(null);
   const record = records[Math.min(pageIndex, records.length - 1)],
-    issue = record?.analysis.issues[issueIndex];
+    issue = record?.analysis.issues[issueIndex],
+    selectedIssueNumber = issue ? issueIndex + 1 : null;
   useEffect(() => {
     setIssueIndex(0);
     setPreview(null);
@@ -846,6 +885,14 @@ export default function Workspace() {
                       </button>
                     </div>
                   </div>
+                  {issue.kind === 'color' && (
+                    <p className={styles.pairedIssueNote}>
+                      <strong>{selectedIssueNumber}A</strong>
+                      <span aria-hidden="true">↔</span>
+                      <strong>{selectedIssueNumber}B</strong>
+                      <span>The linked outlines mark the two regions being compared.</span>
+                    </p>
+                  )}
                   <h3>Why it’s a problem</h3>
                   <p>{issue.description}</p>
                   {issue.metrics.length > 0 && (
