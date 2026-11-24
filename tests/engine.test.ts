@@ -120,7 +120,10 @@ test('blank page is unscored; measured conflicts yield traceable issues', () => 
   fill(r, 55, 10, 45, 50, [109, 131, 62]);
   const s = segment(r);
   const result = evaluate(r, s.regions, s.labels, [], 1);
-  assert.ok(result.issues.some((i) => i.kind === 'color'));
+  const colorIssue = result.issues.find((i) => i.kind === 'color');
+  assert.ok(colorIssue);
+  assert.equal(colorIssue.regionIds.length, 2);
+  assert.notEqual(colorIssue.regionIds[0], colorIssue.regionIds[1]);
   assert.ok(result.score !== null);
   assert.ok(result.warnings.some((w) => w.includes('not assessed')));
 });
