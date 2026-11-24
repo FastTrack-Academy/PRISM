@@ -1,0 +1,181 @@
+item,family,method,profile,legacyScore,grade,examined,warnings,shown,losses,hits,retain,retainFlagged,extra,runtimeMs,topPairs
+ishihara-01,ishihara,A,protan,100,Low measured concern,220,0,0,0,0,1,0,0,138,
+ishihara-01,ishihara,A,deutan,100,Low measured concern,220,0,0,0,0,1,0,0,138,
+ishihara-01,ishihara,A,tritan,100,Low measured concern,220,0,0,0,0,0,0,,138,
+ishihara-01,ishihara,B,protan,,Low measured concern,271,0,0,0,0,1,0,0,155,
+ishihara-01,ishihara,B,deutan,,Low measured concern,271,0,0,0,0,1,0,0,155,
+ishihara-01,ishihara,B,tritan,,Low measured concern,271,0,0,0,0,0,0,,155,
+ishihara-01,ishihara,C,protan,,High concern,12451,19,3,0,0,1,0,3,529,1981-2011|1446-1514|2155-2172
+ishihara-01,ishihara,C,deutan,,Review,12451,26,3,0,0,1,0,3,529,1260-1359|1796-1922|2945-3101
+ishihara-01,ishihara,C,tritan,,Low measured concern,12451,0,0,0,0,0,0,,529,
+ishihara-09,ishihara,A,protan,96,High concern,490,45,3,1,0,0,0,3,159,63-79|277-294|192-203
+ishihara-09,ishihara,A,deutan,96,High concern,490,38,3,1,0,0,0,3,159,93-106|61-76|285-295
+ishihara-09,ishihara,A,tritan,96,Review,490,15,3,0,0,0,0,,159,145-157|179-194|337-348
+ishihara-09,ishihara,B,protan,,High concern,691,71,3,1,0,0,0,3,87,63-79|166-175|277-294
+ishihara-09,ishihara,B,deutan,,High concern,691,59,3,1,0,0,0,3,87,213-224|191-200|225-240
+ishihara-09,ishihara,B,tritan,,Low measured concern,691,0,0,0,0,0,0,,87,
+ishihara-09,ishihara,C,protan,,High concern,15814,227,3,1,0,0,0,3,514,806-897|1650-1714|1806-1912
+ishihara-09,ishihara,C,deutan,,High concern,15814,193,3,1,0,0,0,3,514,717-794|1256-1322|1852-1888
+ishihara-09,ishihara,C,tritan,,Low measured concern,15814,0,0,0,0,0,0,,514,
+ishihara-11,ishihara,A,protan,95,High concern,412,21,3,1,0,0,0,3,97,231-239|69-89|236-243
+ishihara-11,ishihara,A,deutan,95,High concern,412,10,3,1,0,0,0,3,97,231-239|69-89|209-211
+ishihara-11,ishihara,A,tritan,95,Review,412,13,3,0,0,0,0,,97,9-14|86-89|9-19
+ishihara-11,ishihara,B,protan,,High concern,630,26,3,1,0,0,0,3,68,117-133|237-250|230-234
+ishihara-11,ishihara,B,deutan,,High concern,630,11,3,1,0,0,0,3,68,196-217|89-100|58-70
+ishihara-11,ishihara,B,tritan,,Review,630,1,1,0,0,0,0,,68,193-206
+ishihara-11,ishihara,C,protan,,High concern,17571,183,3,1,0,0,0,3,556,888-913|2954-3003|793-913
+ishihara-11,ishihara,C,deutan,,High concern,17571,151,3,1,0,0,0,3,556,2897-3012|2906-3101|2892-2906
+ishihara-11,ishihara,C,tritan,,High concern,17571,62,3,0,0,0,0,,556,2779-2790|2814-2878|1837-1927
+ishihara-19,reverse plate,A,protan,80,High concern,279,110,3,0,0,0,0,,68,141-151|188-195|7-11
+ishihara-19,reverse plate,A,deutan,80,High concern,279,128,3,0,0,0,0,,68,28-33|154-157|154-170
+ishihara-19,reverse plate,A,tritan,80,High concern,279,32,3,0,0,0,0,,68,208-222|208-225|121-143
+ishihara-19,reverse plate,B,protan,,High concern,420,86,3,0,0,0,0,,57,141-151|153-156|7-19
+ishihara-19,reverse plate,B,deutan,,High concern,420,103,3,0,0,0,0,,57,31-52|28-33|144-165
+ishihara-19,reverse plate,B,tritan,,Low measured concern,420,0,0,0,0,0,0,,57,
+ishihara-19,reverse plate,C,protan,,High concern,18365,618,3,0,0,0,0,,555,1933-2112|3732-3737|511-648
+ishihara-19,reverse plate,C,deutan,,High concern,18365,610,3,0,0,0,0,,555,1867-1893|868-1002|2088-2291
+ishihara-19,reverse plate,C,tritan,,High concern,18365,137,3,0,0,0,0,,555,1767-1814|883-964|2774-2837
+nature-leaf-color-only,nature,A,protan,90,High concern,12,6,3,0,0,0,0,,84,20-23|16-17|22-23
+nature-leaf-color-only,nature,A,deutan,90,High concern,12,6,3,0,0,0,0,,84,20-23|22-23|20-21
+nature-leaf-color-only,nature,A,tritan,90,High concern,12,4,3,0,0,0,0,,84,5-13|23-25|22-23
+nature-leaf-color-only,nature,B,protan,,Low measured concern,13,0,0,0,0,0,0,,51,
+nature-leaf-color-only,nature,B,deutan,,Low measured concern,13,0,0,0,0,0,0,,51,
+nature-leaf-color-only,nature,B,tritan,,Low measured concern,13,0,0,0,0,0,0,,51,
+nature-leaf-color-only,nature,C,protan,,High concern,77251,966,3,0,0,0,0,,1348,4229-4230|2889-2939|3139-3182
+nature-leaf-color-only,nature,C,deutan,,High concern,77251,1036,3,0,0,0,0,,1348,2532-2672|3651-3990|4005-4448
+nature-leaf-color-only,nature,C,tritan,,High concern,77251,949,3,0,0,0,0,,1348,2244-2451|1999-2213|4234-4347
+nature-leaf-described,nature,A,protan,90,High concern,12,6,3,0,0,0,0,,60,22-25|18-19|24-25
+nature-leaf-described,nature,A,deutan,90,High concern,12,6,3,0,0,0,0,,60,22-25|24-25|22-23
+nature-leaf-described,nature,A,tritan,90,High concern,12,4,3,0,0,0,0,,60,5-15|25-27|18-19
+nature-leaf-described,nature,B,protan,,Low measured concern,14,0,0,0,0,0,0,,49,
+nature-leaf-described,nature,B,deutan,,Low measured concern,14,0,0,0,0,0,0,,49,
+nature-leaf-described,nature,B,tritan,,Low measured concern,14,0,0,0,0,0,0,,49,
+nature-leaf-described,nature,C,protan,,High concern,77145,930,3,0,0,0,0,,1315,4174-4175|2835-2885|3085-3128
+nature-leaf-described,nature,C,deutan,,High concern,77145,1000,3,0,0,0,0,,1315,2478-2620|3596-3935|3950-4393
+nature-leaf-described,nature,C,tritan,,High concern,77145,932,3,0,0,0,0,,1315,4179-4292|3619-3661|6045-6149
+nature-sumac-color-only,nature,A,protan,82,High concern,33,5,3,0,0,0,0,,63,54-55|21-28|31-36
+nature-sumac-color-only,nature,A,deutan,82,High concern,33,5,3,0,0,0,0,,63,54-55|21-28|31-36
+nature-sumac-color-only,nature,A,tritan,82,High concern,33,5,3,0,0,0,0,,63,21-28|31-36|11-13
+nature-sumac-color-only,nature,B,protan,,Review,64,1,1,0,0,0,0,,54,33-38
+nature-sumac-color-only,nature,B,deutan,,Review,64,5,3,0,0,0,0,,54,33-38|18-24|33-39
+nature-sumac-color-only,nature,B,tritan,,Low measured concern,64,0,0,0,0,0,0,,54,
+nature-sumac-color-only,nature,C,protan,,High concern,70300,1918,3,0,0,0,0,,1252,2715-2903|6237-6321|6590-6746
+nature-sumac-color-only,nature,C,deutan,,High concern,70300,2398,3,0,0,0,0,,1252,3020-3270|6161-6355|4306-4307
+nature-sumac-color-only,nature,C,tritan,,High concern,70300,1296,3,0,0,0,0,,1252,5932-6090|4086-4198|4211-4440
+nature-sumac-described,nature,A,protan,82,High concern,33,6,3,0,0,0,0,,54,52-53|21-27|31-37
+nature-sumac-described,nature,A,deutan,82,High concern,33,6,3,0,0,0,0,,54,52-53|21-27|31-37
+nature-sumac-described,nature,A,tritan,82,High concern,33,5,3,0,0,0,0,,54,21-27|31-37|11-14
+nature-sumac-described,nature,B,protan,,Review,58,1,1,0,0,0,0,,54,33-34
+nature-sumac-described,nature,B,deutan,,Review,58,4,3,0,0,0,0,,54,18-24|34-39|33-34
+nature-sumac-described,nature,B,tritan,,Low measured concern,58,0,0,0,0,0,0,,54,
+nature-sumac-described,nature,C,protan,,High concern,70495,1893,3,0,0,0,0,,1258,2709-2896|6206-6290|6559-6715
+nature-sumac-described,nature,C,deutan,,High concern,70495,2355,3,0,0,0,0,,1258,3006-3251|6130-6324|4274-4275
+nature-sumac-described,nature,C,tritan,,High concern,70495,1279,3,0,0,0,0,,1258,5901-6059|4055-4167|4180-4410
+textbook-transport-bad,textbook,A,protan,83,Low measured concern,15,0,0,1,0,0,0,0,55,
+textbook-transport-bad,textbook,A,deutan,83,High concern,15,2,2,1,1,0,0,1,55,3-4|3-8
+textbook-transport-bad,textbook,A,tritan,83,Low measured concern,15,0,0,0,0,0,0,,55,
+textbook-transport-bad,textbook,B,protan,,Low measured concern,20,0,0,1,0,0,0,0,46,
+textbook-transport-bad,textbook,B,deutan,,High concern,20,2,2,1,1,0,0,1,46,3-4|3-8
+textbook-transport-bad,textbook,B,tritan,,Low measured concern,20,0,0,0,0,0,0,,46,
+textbook-transport-bad,textbook,C,protan,,Low measured concern,3583,0,0,1,0,0,0,0,266,
+textbook-transport-bad,textbook,C,deutan,,High concern,3583,4,3,1,0,0,0,3,266,1380-1485|1485-1495|1436-1495
+textbook-transport-bad,textbook,C,tritan,,Review,3583,1,1,0,0,0,0,,266,1277-1322
+textbook-transport-good,textbook,A,protan,98,Low measured concern,9,0,0,1,0,0,0,0,55,
+textbook-transport-good,textbook,A,deutan,98,Low measured concern,9,0,0,1,0,0,0,0,55,
+textbook-transport-good,textbook,A,tritan,98,Low measured concern,9,0,0,0,0,0,0,,55,
+textbook-transport-good,textbook,B,protan,,Low measured concern,10,0,0,1,0,0,0,0,46,
+textbook-transport-good,textbook,B,deutan,,Low measured concern,10,0,0,1,0,0,0,0,46,
+textbook-transport-good,textbook,B,tritan,,Low measured concern,10,0,0,0,0,0,0,,46,
+textbook-transport-good,textbook,C,protan,,Low measured concern,3931,0,0,1,0,0,0,0,265,
+textbook-transport-good,textbook,C,deutan,,High concern,3931,2,2,1,1,0,0,1,265,1482-1515|1466-1482
+textbook-transport-good,textbook,C,tritan,,High concern,3931,4,3,0,0,0,0,,265,1141-1203|1135-1203|1132-1205
+textbook-map-bad,textbook,A,protan,100,Low measured concern,10,0,0,1,0,0,0,0,59,
+textbook-map-bad,textbook,A,deutan,100,Low measured concern,10,0,0,1,0,0,0,0,59,
+textbook-map-bad,textbook,A,tritan,100,Low measured concern,10,0,0,0,0,0,0,,59,
+textbook-map-bad,textbook,B,protan,,Low measured concern,19,0,0,1,0,0,0,0,48,
+textbook-map-bad,textbook,B,deutan,,High concern,19,2,2,1,1,0,0,1,48,7-8|8-9
+textbook-map-bad,textbook,B,tritan,,Review,19,2,2,0,0,0,0,,48,5-6|4-8
+textbook-map-bad,textbook,C,protan,,Review,3908,2,2,1,0,0,0,2,309,846-847|1544-1596
+textbook-map-bad,textbook,C,deutan,,High concern,3908,8,3,1,0,0,0,3,309,921-945|1472-1506|1340-1396
+textbook-map-bad,textbook,C,tritan,,High concern,3908,5,3,0,0,0,0,,309,831-849|2357-2398|830-849
+textbook-map-good,textbook,A,protan,100,Low measured concern,10,0,0,1,0,0,0,0,59,
+textbook-map-good,textbook,A,deutan,100,Low measured concern,10,0,0,1,0,0,0,0,59,
+textbook-map-good,textbook,A,tritan,100,Low measured concern,10,0,0,0,0,0,0,,59,
+textbook-map-good,textbook,B,protan,,Low measured concern,22,0,0,1,0,0,0,0,48,
+textbook-map-good,textbook,B,deutan,,High concern,22,2,2,1,1,0,0,1,48,8-9|9-10
+textbook-map-good,textbook,B,tritan,,Review,22,2,2,0,0,0,0,,48,5-7|4-9
+textbook-map-good,textbook,C,protan,,Review,4704,2,2,1,0,0,0,2,317,846-847|1581-1633
+textbook-map-good,textbook,C,deutan,,High concern,4704,8,3,1,0,0,0,3,317,917-945|1508-1541|1375-1431
+textbook-map-good,textbook,C,tritan,,High concern,4704,5,3,0,0,0,0,,317,831-849|2432-2473|830-849
+science-chart-bad,scientific_poster,A,protan,84,Low measured concern,13,0,0,1,0,0,0,0,56,
+science-chart-bad,scientific_poster,A,deutan,84,High concern,13,1,1,1,1,0,0,0,56,7-8
+science-chart-bad,scientific_poster,A,tritan,84,Low measured concern,13,0,0,0,0,0,0,,56,
+science-chart-bad,scientific_poster,B,protan,,Low measured concern,14,0,0,1,0,0,0,0,43,
+science-chart-bad,scientific_poster,B,deutan,,High concern,14,1,1,1,1,0,0,0,43,7-8
+science-chart-bad,scientific_poster,B,tritan,,Low measured concern,14,0,0,0,0,0,0,,43,
+science-chart-bad,scientific_poster,C,protan,,Review,2655,1,1,1,0,0,0,1,231,1359-1360
+science-chart-bad,scientific_poster,C,deutan,,High concern,2655,8,3,1,1,0,0,2,231,1009-1107|1350-1358|1160-1204
+science-chart-bad,scientific_poster,C,tritan,,Review,2655,1,1,0,0,0,0,,231,2227-2228
+science-chart-good,scientific_poster,A,protan,84,Review,17,1,1,1,0,0,0,1,55,6-7
+science-chart-good,scientific_poster,A,deutan,84,High concern,17,4,3,1,0,0,0,3,55,8-11|8-10|8-9
+science-chart-good,scientific_poster,A,tritan,84,Review,17,1,1,0,0,0,0,,55,6-7
+science-chart-good,scientific_poster,B,protan,,Low measured concern,23,0,0,1,0,0,0,0,45,
+science-chart-good,scientific_poster,B,deutan,,High concern,23,2,2,1,0,0,0,2,45,8-11|8-10
+science-chart-good,scientific_poster,B,tritan,,Low measured concern,23,0,0,0,0,0,0,,45,
+science-chart-good,scientific_poster,C,protan,,High concern,2738,2,2,1,0,0,0,2,234,1022-1074|1305-1334
+science-chart-good,scientific_poster,C,deutan,,High concern,2738,9,3,1,0,0,0,3,234,1022-1026|1325-1333|1103-1122
+science-chart-good,scientific_poster,C,tritan,,Review,2738,1,1,0,0,0,0,,234,2252-2283
+science-cells-bad,scientific_poster,A,protan,73,Review,28,1,1,0,0,0,0,,59,4-5
+science-cells-bad,scientific_poster,A,deutan,73,Review,28,1,1,0,0,0,0,,59,4-5
+science-cells-bad,scientific_poster,A,tritan,73,High concern,28,9,3,1,1,0,0,2,59,26-30|38-42|12-15
+science-cells-bad,scientific_poster,B,protan,,Low measured concern,46,0,0,0,0,0,0,,47,
+science-cells-bad,scientific_poster,B,deutan,,Low measured concern,46,0,0,0,0,0,0,,47,
+science-cells-bad,scientific_poster,B,tritan,,High concern,46,7,3,1,1,0,0,2,47,26-30|38-42|12-15
+science-cells-bad,scientific_poster,C,protan,,Review,2682,1,1,0,0,0,0,,235,994-1021
+science-cells-bad,scientific_poster,C,deutan,,Review,2682,1,1,0,0,0,0,,235,994-1021
+science-cells-bad,scientific_poster,C,tritan,,High concern,2682,9,3,1,0,0,0,3,235,862-906|1597-1672|1227-1232
+science-cells-good,scientific_poster,A,protan,73,Review,28,1,1,0,0,0,0,,63,4-6
+science-cells-good,scientific_poster,A,deutan,73,Review,28,1,1,0,0,0,0,,63,4-6
+science-cells-good,scientific_poster,A,tritan,73,High concern,28,9,3,1,1,0,0,2,63,31-35|46-50|15-18
+science-cells-good,scientific_poster,B,protan,,Low measured concern,54,0,0,0,0,0,0,,45,
+science-cells-good,scientific_poster,B,deutan,,Low measured concern,54,0,0,0,0,0,0,,45,
+science-cells-good,scientific_poster,B,tritan,,High concern,54,7,3,1,1,0,0,2,45,31-35|46-50|15-18
+science-cells-good,scientific_poster,C,protan,,High concern,2786,8,3,0,0,0,0,,238,1710-1826|1319-1358|1253-1377
+science-cells-good,scientific_poster,C,deutan,,High concern,2786,4,3,0,0,0,0,,238,1319-1358|1533-1622|1710-1826
+science-cells-good,scientific_poster,C,tritan,,High concern,2786,9,3,1,0,0,0,3,238,876-929|874-928|1657-1705
+humanities-timeline-bad,humanities_poster,A,protan,100,Low measured concern,8,0,0,1,0,0,0,0,48,
+humanities-timeline-bad,humanities_poster,A,deutan,100,Low measured concern,8,0,0,1,0,0,0,0,48,
+humanities-timeline-bad,humanities_poster,A,tritan,100,Low measured concern,8,0,0,0,0,0,0,,48,
+humanities-timeline-bad,humanities_poster,B,protan,,Low measured concern,9,0,0,1,0,0,0,0,44,
+humanities-timeline-bad,humanities_poster,B,deutan,,Low measured concern,9,0,0,1,0,0,0,0,44,
+humanities-timeline-bad,humanities_poster,B,tritan,,Low measured concern,9,0,0,0,0,0,0,,44,
+humanities-timeline-bad,humanities_poster,C,protan,,Low measured concern,2790,0,0,1,0,0,0,0,242,
+humanities-timeline-bad,humanities_poster,C,deutan,,Low measured concern,2790,0,0,1,0,0,0,0,242,
+humanities-timeline-bad,humanities_poster,C,tritan,,Low measured concern,2790,0,0,0,0,0,0,,242,
+humanities-timeline-good,humanities_poster,A,protan,100,Low measured concern,8,0,0,1,0,0,0,0,48,
+humanities-timeline-good,humanities_poster,A,deutan,100,Low measured concern,8,0,0,1,0,0,0,0,48,
+humanities-timeline-good,humanities_poster,A,tritan,100,Low measured concern,8,0,0,0,0,0,0,,48,
+humanities-timeline-good,humanities_poster,B,protan,,Low measured concern,9,0,0,1,0,0,0,0,45,
+humanities-timeline-good,humanities_poster,B,deutan,,Low measured concern,9,0,0,1,0,0,0,0,45,
+humanities-timeline-good,humanities_poster,B,tritan,,Low measured concern,9,0,0,0,0,0,0,,45,
+humanities-timeline-good,humanities_poster,C,protan,,Low measured concern,3478,0,0,1,0,0,0,0,247,
+humanities-timeline-good,humanities_poster,C,deutan,,Low measured concern,3478,0,0,1,0,0,0,0,247,
+humanities-timeline-good,humanities_poster,C,tritan,,Low measured concern,3478,0,0,0,0,0,0,,247,
+humanities-map-bad,humanities_poster,A,protan,76,Review,20,1,1,0,0,0,0,,58,10-15
+humanities-map-bad,humanities_poster,A,deutan,76,Low measured concern,20,0,0,0,0,0,0,,58,
+humanities-map-bad,humanities_poster,A,tritan,76,Low measured concern,20,0,0,1,0,0,0,0,58,
+humanities-map-bad,humanities_poster,B,protan,,Low measured concern,30,0,0,0,0,0,0,,44,
+humanities-map-bad,humanities_poster,B,deutan,,Low measured concern,30,0,0,0,0,0,0,,44,
+humanities-map-bad,humanities_poster,B,tritan,,Low measured concern,30,0,0,1,0,0,0,0,44,
+humanities-map-bad,humanities_poster,C,protan,,High concern,3026,9,3,0,0,0,0,,242,1629-1707|1629-1738|1656-1739
+humanities-map-bad,humanities_poster,C,deutan,,Review,3026,3,3,0,0,0,0,,242,1629-1738|1629-1707|1667-1762
+humanities-map-bad,humanities_poster,C,tritan,,High concern,3026,4,3,1,1,0,0,2,242,1197-1220|1151-1220|1151-1285
+humanities-map-good,humanities_poster,A,protan,73,Review,12,4,3,0,0,0,0,,59,9-21|11-12|18-21
+humanities-map-good,humanities_poster,A,deutan,73,Low measured concern,12,0,0,0,0,0,0,,59,
+humanities-map-good,humanities_poster,A,tritan,73,Low measured concern,12,0,0,1,0,0,0,0,59,
+humanities-map-good,humanities_poster,B,protan,,Review,21,5,3,0,0,0,0,,49,9-21|9-11|11-12
+humanities-map-good,humanities_poster,B,deutan,,Low measured concern,21,0,0,0,0,0,0,,49,
+humanities-map-good,humanities_poster,B,tritan,,Low measured concern,21,0,0,1,0,0,0,0,49,
+humanities-map-good,humanities_poster,C,protan,,High concern,3317,15,3,0,0,0,0,,245,1610-1689|1478-1499|1610-1705
+humanities-map-good,humanities_poster,C,deutan,,High concern,3317,10,3,0,0,0,0,,245,1610-1689|1478-1499|1610-1705
+humanities-map-good,humanities_poster,C,tritan,,High concern,3317,5,3,1,1,0,0,2,245,1157-1209|1208-1209|1209-1298

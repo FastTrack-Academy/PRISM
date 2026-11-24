@@ -1,0 +1,56 @@
+Use case: infographic-diagram.
+Create a polished final educational workflow poster for PRISM, a high-school science fair project investigating color vision deficiency (CVD) accessibility in science textbook pages. Landscape 3:2 composition, generous whitespace, exceptionally legible typography, refined editorial / Dribbble product design, white and very pale blue cards, deep navy typography, cobalt and teal accents, tiny warm amber uncertainty indicators. Accessible design: labels and icons accompany color, strong text contrast.
+
+Input image 1 is a supporting compositing reference: actual uploaded science textbook page headed "2.2 PROPERTIES OF LIFE: CELLS", with bacteria and blood cell photographs and their shared caption. Use a recognizable miniature of this actual page in the poster and reuse faithful crops of the BLOOD CELL PHOTO showing "Neutrophil" and "Red blood cells" throughout the workflow. Preserve the real source visual relationships and leader lines; do not invent analysis outputs or fabricate textbook wording. Small paragraph text may be miniature texture, but keep large source labels and imagery recognizable.
+Input image 2 is a supporting compositing reference: uploaded colorful science spread "GET YOUR TEETH INTO THIS!" with a tooth cross section and labels. Include a small recognizable second-example thumbnail in the input area, establishing diverse science page layouts. Primary worked example remains the cells page.
+These are source examples, not edit targets. Create a brand new designed poster using them.
+
+TOP:
+Small brand "PRISM"
+Main large title "From textbook page to CVD review"
+Subtitle "Find the context. Measure the details. Check the meaning."
+Small outlined badge "PROPOSED WORKFLOW"
+
+BODY: six spacious numbered cards arranged 3 columns x 2 rows, unambiguous connected snake flow: top row 01 → 02 → 03, down from 03 to bottom-right 04, then bottom row right-to-left 04 → 05 → 06. Prominent number at top-left of every card and subtle directional arrows in gutters, no crossing arrows.
+
+01 top-left: title "Locate page regions"
+Visual: main actual cells-page miniature with separately outlined large text block, shared caption, bacteria photo, blood-cell photo; smaller teeth-page thumbnail tucked beside it. Rectangular bounding boxes with small corner handles, explicitly NO pixel masks on the full page.
+Copy: "Draw or adjust boxes around complete figures."
+Small pill: "Optional: PP-DocLayout-S proposes boxes"
+Small sublabel: "Text • Figures • Photos • Captions"
+
+02 top-middle: title "Keep context attached"
+Visual: pull out the actual blood-cell photo, retaining its text labels and black leader lines. A small shared-caption card remains visibly connected; add a task card reading "Task: distinguish the two cell types". Show the photo as the main region and caption/task as linked supporting evidence. Use connecting dotted lines, not deletion of content.
+Copy: "Keep labels, captions and linked panels."
+
+03 top-right: title "Measure local details"
+Visual: two adjacent miniature views of same blood-cell crop: original and color-region overlay. Overlay outlines selected cell interiors on a separate preview; do not obscure labels in original. Small two-cell A / B pair cards below, with labels "Color", "Contrast", "Structure". NO numeric values, NO purported exact CVD simulation.
+Copy: "Analyze source pixels inside each region."
+Small pill: "K-means + connected components"
+
+04 bottom-right: title "Build meaningful pairs"
+Visual: A and B comparison of neutrophil versus a red blood cell, visibly highlighted in the shared crop. Also a tiny separate inset of generic chart dashes linked into ONE proposed curve, with legend "Chart example: group fragments". Clear separation so chart is not implied to come from the cell page.
+Copy: "Compare objects, not every tiny fragment."
+Small sublabel: "Color risk • Task relevance • Uncertain structure"
+
+05 bottom-middle: title "Ask focused questions"
+Visual: crop + labels + task evidence cards feed into neat "SmolVLM" review box. Three concise checklist questions:
+"Must these objects be distinguished?"
+"Do labels or shapes provide another cue?"
+"Is the evidence sufficient?"
+Footer copy in card: "Model suggests evidence; rules verify."
+Small pill: "Unknown is allowed"
+
+06 bottom-left: title "Report evidence"
+Visual: small same textbook-page miniature with one located annotation and an adjacent clean report UI. Three stacked outlined text statuses with distinct non-color icons:
+"Probable barrier"
+"Supported alternative cue"
+"Needs review"
+A smaller status line "Show reviewed and unreviewed regions"
+Do not assign a specific status to this source example, do not give a numeric score, no green approval check on the actual cell photo.
+Copy: "Apply fixed rules and explain each finding."
+
+BOTTOM slim footer across width:
+"Browser-first • Editable boundaries • Human task validation"
+Fine but readable disclosure: "Illustrative workflow using benchmark images. Model accuracy and accessibility outcomes require testing."
+All text English and spelled accurately. Make all six major headings and large source images easy to see, prefer large visuals over dense text. No excessive decorative icons, no 3D robots, no fabricated performance statistics, no implied clinical diagnosis or guaranteed accessibility. The result must feel cohesive, sophisticated and classroom-presentable, conveying the actual operation at each step, not merely an abstract flowchart.

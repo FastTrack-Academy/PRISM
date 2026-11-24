@@ -1,0 +1,145 @@
+group,family,variant,designated,profile,original_margin,margin,original_color_review,color_grade,task_grade,cue,target_confidences,other_confidences,target_text,other_text
+educational,textbook-transport,bad,False,original,46.39,46.39,False,0,0,no verified target label,5,25,Co,-—
+educational,textbook-transport,bad,True,protan,46.39,14.68,False,0,0,no verified target label,1,5,Co,-—
+educational,textbook-transport,bad,True,deutan,46.39,2.58,False,2,2,no verified target label,1,14,Co,-—
+educational,textbook-transport,bad,False,tritan,46.39,39.09,False,0,0,no verified target label,2,32,Co,-—
+educational,textbook-transport,good,False,original,46.39,46.39,False,0,0,target label,89 89,96 83 38,SODIUM |,POTASSIUM 1 Py
+educational,textbook-transport,good,True,protan,46.39,14.68,False,0,0,target label,88 88,96 83,SODIUM |,POTASSIUM 1
+educational,textbook-transport,good,True,deutan,46.39,2.58,False,2,0,target label,89 89,96 79,SODIUM |,POTASSIUM 1
+educational,textbook-transport,good,False,tritan,46.39,39.09,False,0,0,target label,90 90,96 84,SODIUM |,POTASSIUM 1
+educational,textbook-map,bad,False,original,46.39,46.39,False,0,0,no verified target label,11,11,a,Sa
+educational,textbook-map,bad,True,protan,46.39,14.68,False,0,0,no verified target label,19,8,EE,a
+educational,textbook-map,bad,True,deutan,46.39,2.58,False,2,2,no verified target label,0,8,-,a
+educational,textbook-map,bad,False,tritan,46.39,39.09,False,0,0,no verified target label,3,1,EE,a
+educational,textbook-map,good,False,original,46.39,46.39,False,0,0,target label,94,96,WETLAND,FARMLAND
+educational,textbook-map,good,True,protan,46.39,14.68,False,0,0,target label,94,96,WETLAND,FARMLAND
+educational,textbook-map,good,True,deutan,46.39,2.58,False,2,0,target label,93,96,WETLAND,FARMLAND
+educational,textbook-map,good,False,tritan,46.39,39.09,False,0,0,target label,93,96,WETLAND,FARMLAND
+educational,science-chart,bad,False,original,46.39,46.39,False,0,0,no verified target label,16,,I,
+educational,science-chart,bad,True,protan,46.39,14.68,False,0,0,no verified target label,16,,I,
+educational,science-chart,bad,True,deutan,46.39,2.58,False,2,2,no verified target label,16,,I,
+educational,science-chart,bad,False,tritan,46.39,39.09,False,0,0,no verified target label,16,,I,
+educational,science-chart,good,False,original,46.39,46.39,False,0,0,target label,96,51,FOREST,"""MEADOW"
+educational,science-chart,good,True,protan,46.39,14.68,False,0,0,target label,96,48,FOREST,"""MEADOW"
+educational,science-chart,good,True,deutan,46.39,2.58,False,2,0,target label,96,49,FOREST,"""MEADOW"
+educational,science-chart,good,False,tritan,46.39,39.09,False,0,0,target label,96,49,FOREST,"""MEADOW"
+educational,science-cells,bad,False,original,21.81,21.81,False,0,0,no verified target label,0,0,:,:
+educational,science-cells,bad,False,protan,21.81,25.67,False,0,0,no verified target label,0,0,:,:
+educational,science-cells,bad,False,deutan,21.81,27.01,False,0,0,no verified target label,0,0,},.
+educational,science-cells,bad,True,tritan,21.81,3.95,False,2,2,no verified target label,0,0,:,.
+educational,science-cells,good,False,original,21.81,21.81,False,0,0,target label,81,2,A+B,a
+educational,science-cells,good,False,protan,21.81,25.67,False,0,0,target label,82,2,A+B,a
+educational,science-cells,good,False,deutan,21.81,27.01,False,0,0,target label,80,0,A+B,a
+educational,science-cells,good,True,tritan,21.81,3.95,False,2,0,target label,80,2,A+B,)
+educational,humanities-timeline,bad,False,original,46.39,46.39,False,0,0,no verified target label,18,18,EE,EE
+educational,humanities-timeline,bad,True,protan,46.39,14.68,False,0,0,no verified target label,18,18,EE,EE
+educational,humanities-timeline,bad,True,deutan,46.39,2.58,False,2,2,no verified target label,18,18,EE,EE
+educational,humanities-timeline,bad,False,tritan,46.39,39.09,False,0,0,no verified target label,18,18,EE,EE
+educational,humanities-timeline,good,False,original,46.39,46.39,False,0,0,no verified target label,70,96,ARRIVAL,DEPARTURE
+educational,humanities-timeline,good,True,protan,46.39,14.68,False,0,0,no verified target label,67,96,ARRIVAL,DEPARTURE
+educational,humanities-timeline,good,True,deutan,46.39,2.58,False,2,2,no verified target label,62,96,ARRIVAL.,DEPARTURE
+educational,humanities-timeline,good,False,tritan,46.39,39.09,False,0,0,no verified target label,67,95,ARRIVAL,DEPARTURE
+educational,humanities-map,bad,False,original,21.49,21.49,False,0,0,no verified target label,13 12,57,I a,|
+educational,humanities-map,bad,False,protan,21.49,25.39,False,0,0,no verified target label,15 88,62,| 1,|
+educational,humanities-map,bad,False,deutan,21.49,26.7,False,0,0,no verified target label,62 88,74,| 1,|
+educational,humanities-map,bad,True,tritan,21.49,3.63,False,2,2,no verified target label,17 7,78,I a,|
+educational,humanities-map,good,False,original,21.49,21.49,False,0,0,no verified target label,87 96 60,61,ORAL HISTORY ROUTE,|
+educational,humanities-map,good,False,protan,21.49,25.39,False,0,0,target label,90 96 92,76,ORAL HISTORY ROUTE,|
+educational,humanities-map,good,False,deutan,21.49,26.7,False,0,0,target label,89 96 91,73,ORAL HISTORY ROUTE,|
+educational,humanities-map,good,True,tritan,21.49,3.63,False,2,2,no verified target label,88 96 64,57,ORAL HISTORY ROUTE,|
+control,protan-left,absent,False,original,51.25,51.25,False,0,0,no verified target label,0,0,oo,oo
+control,protan-left,absent,True,protan,51.25,3.08,False,2,2,no verified target label,0,0,oo,oo
+control,protan-left,absent,False,deutan,51.25,13.26,False,0,0,no verified target label,0,0,oo,oo
+control,protan-left,absent,False,tritan,51.25,47.32,False,0,0,no verified target label,0,0,oo,oo
+control,protan-left,correct,False,original,51.25,51.25,False,0,0,target label,96,95,CEDAR,MAPLE
+control,protan-left,correct,True,protan,51.25,3.08,False,2,0,target label,96,95,CEDAR,MAPLE
+control,protan-left,correct,False,deutan,51.25,13.26,False,0,0,target label,96,95,CEDAR,MAPLE
+control,protan-left,correct,False,tritan,51.25,47.32,False,0,0,target label,96,95,CEDAR,MAPLE
+control,protan-left,swapped,False,original,51.25,51.25,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,protan-left,swapped,True,protan,51.25,3.08,False,2,,contradiction,95,96,MAPLE,CEDAR
+control,protan-left,swapped,False,deutan,51.25,13.26,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,protan-left,swapped,False,tritan,51.25,47.32,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,protan-left,decorative,False,original,51.25,51.25,False,0,0,no verified target label,0,0,oo,oo
+control,protan-left,decorative,True,protan,51.25,3.08,False,2,2,no verified target label,0,0,oo,oo
+control,protan-left,decorative,False,deutan,51.25,13.26,False,0,0,no verified target label,0,0,oo,oo
+control,protan-left,decorative,False,tritan,51.25,47.32,False,0,0,no verified target label,0,0,oo,oo
+control,protan-right,absent,False,original,51.25,51.25,False,0,0,no verified target label,0,0,oo,oo
+control,protan-right,absent,True,protan,51.25,3.08,False,2,2,no verified target label,0,0,oo,oo
+control,protan-right,absent,False,deutan,51.25,13.26,False,0,0,no verified target label,0,0,oo,oo
+control,protan-right,absent,False,tritan,51.25,47.32,False,0,0,no verified target label,0,0,oo,oo
+control,protan-right,correct,False,original,51.25,51.25,False,0,0,target label,96,95,CEDAR,MAPLE
+control,protan-right,correct,True,protan,51.25,3.08,False,2,0,target label,96,95,CEDAR,MAPLE
+control,protan-right,correct,False,deutan,51.25,13.26,False,0,0,target label,96,95,CEDAR,MAPLE
+control,protan-right,correct,False,tritan,51.25,47.32,False,0,0,target label,96,95,CEDAR,MAPLE
+control,protan-right,swapped,False,original,51.25,51.25,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,protan-right,swapped,True,protan,51.25,3.08,False,2,,contradiction,95,96,MAPLE,CEDAR
+control,protan-right,swapped,False,deutan,51.25,13.26,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,protan-right,swapped,False,tritan,51.25,47.32,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,protan-right,decorative,False,original,51.25,51.25,False,0,0,no verified target label,0,0,oo,oo
+control,protan-right,decorative,True,protan,51.25,3.08,False,2,2,no verified target label,0,0,oo,oo
+control,protan-right,decorative,False,deutan,51.25,13.26,False,0,0,no verified target label,0,0,oo,oo
+control,protan-right,decorative,False,tritan,51.25,47.32,False,0,0,no verified target label,0,0,oo,oo
+control,deutan-left,absent,False,original,46.39,46.39,False,0,0,no verified target label,0,0,oo,oo
+control,deutan-left,absent,False,protan,46.39,14.68,False,0,0,no verified target label,0,0,oo,oo
+control,deutan-left,absent,True,deutan,46.39,2.58,False,2,2,no verified target label,0,0,oo,oo
+control,deutan-left,absent,False,tritan,46.39,39.09,False,0,0,no verified target label,0,0,oo,oo
+control,deutan-left,correct,False,original,46.39,46.39,False,0,0,target label,96,95,CEDAR,MAPLE
+control,deutan-left,correct,False,protan,46.39,14.68,False,0,0,target label,96,95,CEDAR,MAPLE
+control,deutan-left,correct,True,deutan,46.39,2.58,False,2,0,target label,96,95,CEDAR,MAPLE
+control,deutan-left,correct,False,tritan,46.39,39.09,False,0,0,target label,96,95,CEDAR,MAPLE
+control,deutan-left,swapped,False,original,46.39,46.39,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,deutan-left,swapped,False,protan,46.39,14.68,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,deutan-left,swapped,True,deutan,46.39,2.58,False,2,,contradiction,95,96,MAPLE,CEDAR
+control,deutan-left,swapped,False,tritan,46.39,39.09,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,deutan-left,decorative,False,original,46.39,46.39,False,0,0,no verified target label,0,0,oo,oo
+control,deutan-left,decorative,False,protan,46.39,14.68,False,0,0,no verified target label,0,0,oo,oo
+control,deutan-left,decorative,True,deutan,46.39,2.58,False,2,2,no verified target label,0,0,oo,oo
+control,deutan-left,decorative,False,tritan,46.39,39.09,False,0,0,no verified target label,0,0,oo,oo
+control,deutan-right,absent,False,original,46.39,46.39,False,0,0,no verified target label,0,0,oo,oo
+control,deutan-right,absent,False,protan,46.39,14.68,False,0,0,no verified target label,0,0,oo,oo
+control,deutan-right,absent,True,deutan,46.39,2.58,False,2,2,no verified target label,0,0,oo,oo
+control,deutan-right,absent,False,tritan,46.39,39.09,False,0,0,no verified target label,0,0,oo,oo
+control,deutan-right,correct,False,original,46.39,46.39,False,0,0,target label,96,95,CEDAR,MAPLE
+control,deutan-right,correct,False,protan,46.39,14.68,False,0,0,target label,96,95,CEDAR,MAPLE
+control,deutan-right,correct,True,deutan,46.39,2.58,False,2,0,target label,96,95,CEDAR,MAPLE
+control,deutan-right,correct,False,tritan,46.39,39.09,False,0,0,target label,96,95,CEDAR,MAPLE
+control,deutan-right,swapped,False,original,46.39,46.39,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,deutan-right,swapped,False,protan,46.39,14.68,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,deutan-right,swapped,True,deutan,46.39,2.58,False,2,,contradiction,95,96,MAPLE,CEDAR
+control,deutan-right,swapped,False,tritan,46.39,39.09,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,deutan-right,decorative,False,original,46.39,46.39,False,0,0,no verified target label,0,0,oo,oo
+control,deutan-right,decorative,False,protan,46.39,14.68,False,0,0,no verified target label,0,0,oo,oo
+control,deutan-right,decorative,True,deutan,46.39,2.58,False,2,2,no verified target label,0,0,oo,oo
+control,deutan-right,decorative,False,tritan,46.39,39.09,False,0,0,no verified target label,0,0,oo,oo
+control,tritan-left,absent,False,original,21.81,21.81,False,0,0,no verified target label,0,0,oo,oo
+control,tritan-left,absent,False,protan,21.81,25.67,False,0,0,no verified target label,0,0,oo,oo
+control,tritan-left,absent,False,deutan,21.81,27.01,False,0,0,no verified target label,0,0,oo,oo
+control,tritan-left,absent,True,tritan,21.81,3.95,False,2,2,no verified target label,0,0,oo,oo
+control,tritan-left,correct,False,original,21.81,21.81,False,0,0,target label,96,95,CEDAR,MAPLE
+control,tritan-left,correct,False,protan,21.81,25.67,False,0,0,target label,96,95,CEDAR,MAPLE
+control,tritan-left,correct,False,deutan,21.81,27.01,False,0,0,target label,96,95,CEDAR,MAPLE
+control,tritan-left,correct,True,tritan,21.81,3.95,False,2,0,target label,96,95,CEDAR,MAPLE
+control,tritan-left,swapped,False,original,21.81,21.81,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,tritan-left,swapped,False,protan,21.81,25.67,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,tritan-left,swapped,False,deutan,21.81,27.01,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,tritan-left,swapped,True,tritan,21.81,3.95,False,2,,contradiction,95,96,MAPLE,CEDAR
+control,tritan-left,decorative,False,original,21.81,21.81,False,0,0,no verified target label,0,0,oo,oo
+control,tritan-left,decorative,False,protan,21.81,25.67,False,0,0,no verified target label,0,0,oo,oo
+control,tritan-left,decorative,False,deutan,21.81,27.01,False,0,0,no verified target label,0,0,oo,oo
+control,tritan-left,decorative,True,tritan,21.81,3.95,False,2,2,no verified target label,0,0,oo,oo
+control,tritan-right,absent,False,original,21.81,21.81,False,0,0,no verified target label,0,0,oo,oo
+control,tritan-right,absent,False,protan,21.81,25.67,False,0,0,no verified target label,0,0,oo,oo
+control,tritan-right,absent,False,deutan,21.81,27.01,False,0,0,no verified target label,0,0,oo,oo
+control,tritan-right,absent,True,tritan,21.81,3.95,False,2,2,no verified target label,0,0,oo,oo
+control,tritan-right,correct,False,original,21.81,21.81,False,0,0,target label,96,95,CEDAR,MAPLE
+control,tritan-right,correct,False,protan,21.81,25.67,False,0,0,target label,96,95,CEDAR,MAPLE
+control,tritan-right,correct,False,deutan,21.81,27.01,False,0,0,target label,96,95,CEDAR,MAPLE
+control,tritan-right,correct,True,tritan,21.81,3.95,False,2,0,target label,96,95,CEDAR,MAPLE
+control,tritan-right,swapped,False,original,21.81,21.81,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,tritan-right,swapped,False,protan,21.81,25.67,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,tritan-right,swapped,False,deutan,21.81,27.01,False,0,,contradiction,95,96,MAPLE,CEDAR
+control,tritan-right,swapped,True,tritan,21.81,3.95,False,2,,contradiction,95,96,MAPLE,CEDAR
+control,tritan-right,decorative,False,original,21.81,21.81,False,0,0,no verified target label,0,0,oo,oo
+control,tritan-right,decorative,False,protan,21.81,25.67,False,0,0,no verified target label,0,0,oo,oo
+control,tritan-right,decorative,False,deutan,21.81,27.01,False,0,0,no verified target label,0,0,oo,oo
+control,tritan-right,decorative,True,tritan,21.81,3.95,False,2,2,no verified target label,0,0,oo,oo

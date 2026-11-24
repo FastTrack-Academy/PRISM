@@ -1,0 +1,37 @@
+image,role,profile,version,risk_score,width,height,pairs,warnings,grade,color_a,color_b,original_delta_e,simulated_delta_e,retained_fraction
+ishihara-01,control,protan,stage1-palette-1,0,700,700,804,0,Low measured concern,#000000,#f2732b,56.71,48.65,0.858
+ishihara-01,control,deutan,stage1-palette-1,0,700,700,804,0,Low measured concern,#000000,#f2732b,56.71,59.42,1.048
+ishihara-01,control,tritan,stage1-palette-1,0,700,700,804,0,Low measured concern,#000000,#f2732b,56.71,54.51,0.961
+ishihara-09,challenge,protan,stage1-palette-1,91,700,700,1526,14,High concern,#8fb875,#e8a670,31.72,0.98,0.031
+ishihara-09,challenge,deutan,stage1-palette-1,94,700,700,1526,16,High concern,#d59978,#8eb775,33.45,0.63,0.019
+ishihara-09,challenge,tritan,stage1-palette-1,1,700,700,1526,0,Low measured concern,#e49160,#b47357,12.50,11.88,0.951
+ishihara-11,challenge,protan,stage1-palette-1,70,700,700,2273,9,High concern,#d2965b,#839b4c,27.25,3.11,0.114
+ishihara-11,challenge,deutan,stage1-palette-1,86,700,700,2273,5,High concern,#b78656,#839b4b,24.66,1.31,0.053
+ishihara-11,challenge,tritan,stage1-palette-1,22,700,700,2273,1,Review,#77b688,#1aa996,12.76,7.30,0.572
+ishihara-19,exploratory-reverse,protan,stage1-palette-1,93,700,700,1519,10,High concern,#d8a269,#4ab367,36.72,0.76,0.021
+ishihara-19,exploratory-reverse,deutan,stage1-palette-1,90,700,700,1519,13,High concern,#d9a78b,#95c384,31.93,1.05,0.033
+ishihara-19,exploratory-reverse,tritan,stage1-palette-1,10,700,700,1519,0,Low measured concern,#e97857,#e8a26c,14.11,9.86,0.699
+nature-leaf-color-only,photograph,protan,stage1-palette-1,60,625,700,1036,2,High concern,#282706,#472617,19.40,3.83,0.197
+nature-leaf-color-only,photograph,deutan,stage1-palette-1,29,625,700,1036,1,Review,#682618,#2b2805,25.76,8.54,0.332
+nature-leaf-color-only,photograph,tritan,stage1-palette-1,26,625,700,1036,1,Review,#773b53,#883537,12.10,6.53,0.540
+nature-sumac-color-only,photograph,protan,stage1-palette-1,37,625,700,2211,2,Review,#a99967,#d9764b,23.69,7.11,0.300
+nature-sumac-color-only,photograph,deutan,stage1-palette-1,15,625,700,2211,0,Low measured concern,#d9764b,#8b7a46,24.02,10.87,0.453
+nature-sumac-color-only,photograph,tritan,stage1-palette-1,27,625,700,2211,1,Review,#a6797b,#c465b8,19.88,8.09,0.407
+textbook-transport-bad,diagram,protan,stage1-palette-1,2,700,686,174,0,Low measured concern,#71884a,#bd4b45,46.29,14.50,0.313
+textbook-transport-bad,diagram,deutan,stage1-palette-1,77,700,686,174,1,High concern,#71884a,#bd4b45,46.29,2.69,0.058
+textbook-transport-bad,diagram,tritan,stage1-palette-1,10,700,686,174,0,Low measured concern,#71884a,#799a95,19.71,11.39,0.578
+textbook-map-bad,diagram,protan,stage1-palette-1,1,700,686,82,0,Low measured concern,#bd4b45,#708849,46.39,14.68,0.316
+textbook-map-bad,diagram,deutan,stage1-palette-1,78,700,686,82,1,High concern,#bd4b45,#708849,46.39,2.58,0.056
+textbook-map-bad,diagram,tritan,stage1-palette-1,3,700,686,82,0,Low measured concern,#5487ab,#286795,12.42,10.90,0.877
+science-chart-bad,diagram,protan,stage1-palette-1,1,625,700,88,0,Low measured concern,#bd4c46,#71894a,46.22,14.82,0.321
+science-chart-bad,diagram,deutan,stage1-palette-1,76,625,700,88,1,High concern,#bd4c46,#71894a,46.22,2.80,0.061
+science-chart-bad,diagram,tritan,stage1-palette-1,2,625,700,88,0,Low measured concern,#286895,#598bae,13.89,12.16,0.875
+science-cells-bad,diagram,protan,stage1-palette-1,0,625,700,69,0,Low measured concern,#286895,#598bae,13.89,13.66,0.983
+science-cells-bad,diagram,deutan,stage1-palette-1,0,625,700,69,0,Low measured concern,#fdfdfd,#457ca4,40.17,41.58,1.035
+science-cells-bad,diagram,tritan,stage1-palette-1,60,625,700,69,1,High concern,#58bcc0,#5dc582,21.93,3.95,0.180
+humanities-timeline-bad,diagram,protan,stage1-palette-1,0,625,700,108,0,Low measured concern,#fefefe,#a8c2d4,17.79,16.10,0.905
+humanities-timeline-bad,diagram,deutan,stage1-palette-1,0,625,700,108,0,Low measured concern,#fefefe,#a8c2d4,17.79,17.59,0.989
+humanities-timeline-bad,diagram,tritan,stage1-palette-1,2,625,700,108,0,Low measured concern,#535d6f,#708849,34.56,14.48,0.419
+humanities-map-bad,diagram,protan,stage1-palette-1,28,625,700,109,1,Review,#59bcc0,#cad2d6,20.60,8.07,0.392
+humanities-map-bad,diagram,deutan,stage1-palette-1,9,625,700,109,0,Low measured concern,#fbfbf9,#a8ddbc,21.52,12.07,0.561
+humanities-map-bad,diagram,tritan,stage1-palette-1,60,625,700,109,1,High concern,#5dc582,#59bcc0,21.81,3.95,0.181

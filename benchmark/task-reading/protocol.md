@@ -1,0 +1,26 @@
+# Can a reader recover the category needed to answer a textbook question?
+
+## Prediction and experiment
+
+Freeze these rules before running the pilot. For a two-choice textbook question, a decoder that can read both a color key and a correctly placed direct label should rank more labeled variants below their color-only partners in predicted risk than a decoder restricted to the color key. A swapped label must trigger review. Adding identical words outside the target locations should have no effect.
+
+Use all six paired educational figure families in the existing development bank. The same task specification, coordinates, input size and rules apply to both members of a family. Nature photographs and Ishihara numerals lack the two category-to-key correspondences required by this prototype. Mark them outside its coverage. The method can apply to a photograph with two keyed specimens and a suitable identification task.
+
+For each family, an annotator identifies two alternatives, their color exemplars in the printed key, one interior point on each mark, and a search window for text directly attached to each mark. Correspondence is assigned from the source artwork. These are assisted measurements. The scorer sees the pixels and this specification, including the expected identity of each mark. The variant name and expected risk are withheld. Four original tasks are reduced to bounded comparisons where needed. The result describes the chosen comparison. For a whole-page audit, define the required comparisons before scoring and report the highest concern, the count at each level, and unassessed tasks.
+
+## Frozen measurements
+
+- Render at a maximum edge of 700 px on white. Measure median RGB in a 3-by-3 interior patch at each point. Compute color under original vision and each of three full-severity Machado simulations. Use CIEDE2000.
+- For each mark, calculate its distance to the competing key minus its distance to the correct key. A large positive margin supports the correct match. Take the smaller margin across the two alternatives. This is a two-class nearest-prototype model.
+- A margin of at least 12 earns 0 (low measured concern), from 6 to below 12 earns 1 (review), and below 6 earns 2 (high concern on the tested evidence routes). These cutoffs are hypotheses. Flag an original margin below 12 for baseline review. Report both the original and simulated margin so pre-existing difficulty can be identified.
+- Read the same simulated image with a local English OCR model. A target name recovered in its own search window at word confidence at least 75 provides a second route to a **single named target among two alternatives**. A complete match requires whole words in sequence. A target name in the other window or a competing name in the target window yields unresolved. OCR failure yields unresolved. Missing words provide no label credit. Shapes, line styles, reasoning from captions and intervening obstacles remain outside the pilot.
+- With a verified target label the task grade is 0. Otherwise use the color grade. Keep both grades and the recognized words. An explicit contradictory label takes precedence over either grade.
+- Score three systems: original PRISM's stored no-OCR page score (higher is better), the color-key decoder, and the same decoder with direct-label evidence. Primary outcome is paired direction on the benchmark's designated profiles. Count ties, reversals and unresolved pairs. A family is a strict win only when all its designated profiles improve. Also report the per-profile counts, using the source family as the experimental unit.
+- Secondary outcome: on new controlled cards, independently vary which side holds the target, the palette (one for each profile), and label condition (absent, correct, swapped, decorative). Use the same marks and key across each group. Predefine success as concern from the collapsing color alone, low concern with a correct label, unresolved with swapped labels, and no change with decorative text. These cards test mechanics and do not constitute independent classroom or human validation.
+
+## Next validation on authentic pages
+
+Before any tuning, have a teacher external to development select 12 previously unseen diagrams across at least four independently sourced textbooks, with tasks involving legends, maps, labels and multistep figures. Keep each book in one partition. A second reviewer independently marks the needed comparisons and records available evidence without seeing scores. Resolve disagreements before evaluation. Record family-level paired directions, false reassurance against design review, coverage, and failures by profile and page type. Establishing a relationship to actual reading difficulty would require separately approved, consented participant tasks with correctness, time, and difficulty recorded per profile. The images-only pilot measures agreement with design expectations.
+
+The project fits the Innovation judging category through controlled comparison, provenance, analysis of failure, and a reproducible demonstration. Keep a student log of predictions, changes, and observations. [CWSF judging](https://mystemspace.ca/resources/understanding-the-stem-project-judging-process/) · [W3C guidance on alternative visual cues](https://www.w3.org/WAI/WCAG21/Understanding/use-of-color.html)
+

@@ -2,21 +2,34 @@ import type { PDFDocumentProxy } from 'pdfjs-dist';
 import type { Raster, TextRegion } from './types';
 import { sampleSVG } from './sample';
 
+export type RenderOptions = {
+  /**
+   * When true, transparent image pixels are preserved untouched (raw RGBA)
+   * so PCCI preprocessing can apply reference-compatible alpha compositing and Lanczos-3 resizing.
+   * When false, images are composited onto white for white-page display.
+   */
+  preserveAlpha?: boolean;
+  /** Optional explicit background fill color when preserveAlpha is false ('black' | 'white'). */
+  background?: 'black' | 'white';
+};
+
 export type LocalDocument = {
   name: string;
   count: number;
   kind: 'pdf' | 'image' | 'sample';
   bytes: Uint8Array | null;
-  render: (page: number, maxEdge: number) => Promise<HTMLCanvasElement>;
+  render: (page: number, maxEdge: number, options?: RenderOptions) => Promise<HTMLCanvasElement>;
   nativeText: (page: number, width: number, height: number) => Promise<TextRegion[]>;
   destroy: () => Promise<void>;
 };
+
 export const rasterOf = (c: HTMLCanvasElement): Raster => ({
   width: c.width,
   height: c.height,
   data: c.getContext('2d', { willReadFrequently: true })!.getImageData(0, 0, c.width, c.height)
     .data,
 });
+
 export function canvasOf(r: Raster) {
   const c = document.createElement('canvas');
   c.width = r.width;
@@ -28,7 +41,8 @@ export function canvasOf(r: Raster) {
   );
   return c;
 }
-export const blobOf = (canvas: HTMLCanvasElement, type = 'image/png', quality = 0.9) =>
+
+export const blobOf = (canvas: HTMLCanvasElement, type = 'image/png', quality = 0.92) =>
   new Promise<Blob>((resolve, reject) =>
     canvas.toBlob(
       (b) => (b ? resolve(b) : reject(new Error('Unable to create image.'))),
@@ -36,19 +50,26 @@ export const blobOf = (canvas: HTMLCanvasElement, type = 'image/png', quality = 
       quality,
     ),
   );
-async function renderImage(blob: Blob, maxEdge: number) {
+
+async function renderImage(blob: Blob, maxEdge: number, options?: RenderOptions) {
   const bitmap = await createImageBitmap(blob);
-  const scale = Math.min(1, maxEdge / Math.max(bitmap.width, bitmap.height));
+  const scale =
+    !Number.isFinite(maxEdge) || maxEdge <= 0
+      ? 1
+      : Math.min(1, maxEdge / Math.max(bitmap.width, bitmap.height));
   const c = document.createElement('canvas');
   c.width = Math.max(1, Math.round(bitmap.width * scale));
   c.height = Math.max(1, Math.round(bitmap.height * scale));
-  const ctx = c.getContext('2d')!;
-  ctx.fillStyle = 'white';
-  ctx.fillRect(0, 0, c.width, c.height);
+  const ctx = c.getContext('2d', { willReadFrequently: true })!;
+  if (!options?.preserveAlpha) {
+    ctx.fillStyle = options?.background === 'white' ? '#ffffff' : '#000000';
+    ctx.fillRect(0, 0, c.width, c.height);
+  }
   ctx.drawImage(bitmap, 0, 0, c.width, c.height);
   bitmap.close();
   return c;
 }
+
 export async function openLocalFile(file: File): Promise<LocalDocument> {
   if (file.size > 100 * 1024 * 1024) throw new Error('Choose a file smaller than 100 MB.');
   const bytes = new Uint8Array(await file.arrayBuffer());
@@ -65,7 +86,7 @@ export async function openLocalFile(file: File): Promise<LocalDocument> {
       count: 1,
       kind: 'image',
       bytes,
-      render: (_, max) => renderImage(file, max),
+      render: (_, max, opts) => renderImage(file, max, opts),
       nativeText: async () => [],
       destroy: async () => {},
     };
@@ -98,13 +119,14 @@ export async function openLocalFile(file: File): Promise<LocalDocument> {
     async render(n, max) {
       const page = await pdf.getPage(n);
       const base = page.getViewport({ scale: 1 });
-      const viewport = page.getViewport({ scale: max / Math.max(base.width, base.height) });
+      const targetMax = Number.isFinite(max) && max > 0 ? max : 1600;
+      const viewport = page.getViewport({ scale: targetMax / Math.max(base.width, base.height) });
       const canvas = document.createElement('canvas');
       canvas.width = Math.ceil(viewport.width);
       canvas.height = Math.ceil(viewport.height);
       await page.render({
         canvas,
-        canvasContext: canvas.getContext('2d')!,
+        canvasContext: canvas.getContext('2d', { willReadFrequently: true })!,
         viewport,
         background: 'rgb(255,255,255)',
       }).promise;
@@ -140,6 +162,7 @@ export async function openLocalFile(file: File): Promise<LocalDocument> {
     },
   };
 }
+
 export function sampleDocument(): LocalDocument {
   return {
     name: 'Biology · sample textbook',
@@ -154,10 +177,11 @@ export function sampleDocument(): LocalDocument {
         img.src = url;
         await img.decode();
         const c = document.createElement('canvas');
-        const scale = max / 940;
+        const targetMax = Number.isFinite(max) && max > 0 ? max : 1400;
+        const scale = targetMax / 940;
         c.width = Math.round(740 * scale);
         c.height = Math.round(940 * scale);
-        c.getContext('2d')!.drawImage(img, 0, 0, c.width, c.height);
+        c.getContext('2d', { willReadFrequently: true })!.drawImage(img, 0, 0, c.width, c.height);
         return c;
       } finally {
         URL.revokeObjectURL(url);

@@ -1,0 +1,14 @@
+[
+  {"original":"ishihara-01","role":"control"},
+  {"original":"ishihara-09","role":"challenge"},
+  {"original":"ishihara-11","role":"challenge"},
+  {"original":"ishihara-19","role":"exploratory-reverse"},
+  {"original":"nature-leaf-color-only","role":"photograph","crop":[78,330,923,891],"stage2":"nature-leaf-described"},
+  {"original":"nature-sumac-color-only","role":"photograph","crop":[78,294,923,927],"stage2":"nature-sumac-described"},
+  {"original":"textbook-transport-bad","role":"diagram","crop":[75,260,926,723],"stage2":"textbook-transport-good"},
+  {"original":"textbook-map-bad","role":"diagram","crop":[96,240,905,745],"stage2":"textbook-map-good"},
+  {"original":"science-chart-bad","role":"diagram","crop":[70,234,931,864],"stage2":"science-chart-good"},
+  {"original":"science-cells-bad","role":"diagram","crop":[80,240,921,844],"stage2":"science-cells-good"},
+  {"original":"humanities-timeline-bad","role":"diagram","crop":[85,250,925,880],"stage2":"humanities-timeline-good"},
+  {"original":"humanities-map-bad","role":"diagram","crop":[93,241,908,844],"stage2":"humanities-map-good"}
+]

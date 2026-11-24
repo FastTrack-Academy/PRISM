@@ -1,74 +1,104 @@
-# PRISM — Perceptual Recoloring for Inclusive School Materials
+# PRISM — Perceptual Color Confusion Index (PCCI)
 
-A purely frontend Next.js app for exploring textbook color accessibility. Created by Ella; the research notebooks remain in `code resource/`.
+**PRISM** (*Perceptual Recoloring for Inclusive School Materials*) is a browser-local Next.js scientific web application for estimating colour-confusion risks in educational images and textbook PDFs for individuals with Colour Vision Deficiency (CVD).
 
-## Run locally
+All computation runs locally in the user's browser using Web Workers—no account, external AI API, or document upload to any server is required.
 
-Use Node.js 22.13+ (Node 24 recommended).
+---
+
+## Scientific architecture
+
+PRISM separates educational accessibility into two dimensions:
+
+1. **Perceptual colour confusion (implemented via PCCI):** whether originally distinguishable colours collapse toward each other under simulated full dichromacy.
+2. **Contextual information accessibility (future work):** whether text labels, symbols, shapes, patterns, borders, or legends compensate for colour confusion.
+
+PCCI produces **three independent 0–100 risk scores**—**Deuteranopia**, **Protanopia**, and **Tritanopia**—where higher scores indicate greater estimated colour-confusion risk. OCR, text recognition, and heuristic redundancy checks do not modify PCCI scores.
+
+### Algorithm pipeline (`PCCI-1.0.0-stage1`)
+
+1. **Preprocessing (`src/lib/pcci/preprocess.ts`)**: Preserves original high-resolution imagery for visualization/export. Creates a computational image downsampled with separable **Lanczos-3** to a maximum edge of `640 px` (aspect preserved, never upscaled). Transparent pixels are composited onto black in reference-compatible mode (matching `prism_stage1.py`).
+2. **Colour space (`src/lib/pcci/colorspace.ts`)**: Normalized `[0, 1]` sRGB → Linear RGB → CIE XYZ (D65) → CIELAB (`skimage.color`-compatible matrices and transfer functions).
+3. **Representative colour extraction (`src/lib/pcci/kmeans.ts`)**: Deterministic **MiniBatch K-means** (Sculley, 2010) in CIELAB space (`K = 24`, max `50,000` sampled pixels, seed `42`, `n_init = 3`, `batch_size = 4,096`, automatic K reduction when fewer than 24 unique colours exist). Fitted Lab centroids are converted back to gamut-clipped sRGB prior to distance evaluation.
+4. **Physiological CVD simulation (`src/lib/pcci/cvd.ts`)**: Applied in linear-light RGB (`sRGB → Linear → CVD → Clip [0, 1] → sRGB`):
+   - **Deuteranopia**: Machado, Oliveira & Fernandes (2009), severity 1.0.
+   - **Protanopia**: Machado, Oliveira & Fernandes (2009), severity 1.0.
+   - **Tritanopia**: Brettel, Viénot & Mollon (1997), two-plane projection.
+   The exact same functions drive both scoring and displayed/exported simulations.
+5. **CIEDE2000 & Pairwise PCCI risk (`src/lib/pcci/ciede2000.ts`, `src/lib/pcci/risk.ts`)**: Complete CIEDE2000 (Sharma et al., 2005). Eligible pairs require `D_original ≥ 10` and both clusters occupying `≥ 0.5%` (`0.005`) of pixels. Multiplicative pairwise risk:
+   - `L = max(0, 1 - D_cvd / D_original)`
+   - `A = exp(-(D_cvd / τ)²)` (`τ = 12`)
+   - `r = L × A`
+6. **Global & local spatial weighting (`src/lib/pcci/spatial.ts`)**:
+   - Global frequency weight `G(i, j) = p_i × p_j`
+   - Multi-scale spatial co-occurrence `S(i, j)` across offsets `2, 8, 16, 32 px` in four directions `(0, s)`, `(s, 0)`, `(s, s)`, `(s, -s)` (skipping offsets larger than image dimensions to avoid division by zero)
+   - Combined weight `W = 0.5 × norm(G) + 0.5 × norm(S)`, renormalized to 1.
+7. **Weighted upper-tail aggregation (`src/lib/pcci/risk.ts`)**:
+   - `PCCI = 100 × WeightedTopMean_10%(r, W)` over the top **10% of cumulative eligible pair weight** (not pair count), including exact fractional weight at the boundary.
+   - Supplementary metrics: weighted mean risk (`100 × Σ r × W`) and high-risk pair-weight share (`100 × Σ W` for `r ≥ 0.5`, representing eligible pair weight share rather than image pixel percentage).
+
+---
+
+## Validation & Regression Summary
+
+- **Frozen-intermediate parity** (exact Python palette & label masks fed into TypeScript scoring across all 9 reference images / 27 scores): matches Python `prism_stage1.py` within floating-point precision (`max |err| = 3.89 × 10⁻⁵` vs `prism_stage1_results.csv`, `< 10⁻¹⁴` vs local Python).
+- **End-to-end 9-image regression** (raw RGBA → TypeScript Lanczos-3 → TypeScript MiniBatch K-means → TypeScript PCCI vs `prism_stage1_results.csv`):
+  - **Overall MAE**: `1.18` points across all 27 scores (`139–286 ms` per image in Node/V8).
+  - **24 of 27 scores (8 of 9 images)** achieve `< 2.0` points absolute error (MAE `0.69` across those 24 scores).
+  - **Documented deviation**: On *Food and health* (`487 × 630`), TypeScript scores (`6.5 / 5.3 / 54.4`) sit inside `scikit-learn`'s own multi-seed clustering variance (`~4.9 / 3.4 / 56.7` across Python seeds `0, 1, 7, 123`), whereas Python `seed=42` splits a marginal pinkish/neutral cluster at `13.3 / 9.5 / 59.1`. No scoring formula was modified to fit this variance.
+  - **Small-image edge-case fix**: Spatial co-occurrence skips offsets larger than image width/height and normalizes by the count of valid `(offset, direction)` combinations instead of a hardcoded `16`, preventing division by zero on very small images.
+
+---
+
+## Run Locally
+
+Requires **Node.js 22.13+** (Node 24 recommended).
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open http://localhost:3000. The predev/prebuild scripts copy the PDF worker, fonts, WASM, English OCR model, and OCR worker into `public/vendor/`. They are served from the same origin; no CDN, model API, secrets, or backend is needed.
+Open `http://localhost:3000`. The `predev`/`prebuild` hook copies same-origin PDF.js worker, fonts, and WASM assets into `public/vendor/`.
 
-For a production preview:
-
-```sh
-npm run build
-npm start
-```
-
-Open http://127.0.0.1:4173. This optional local preview server serves the static `out/` directory and mirrors the Netlify security policy; it is not deployed.
-
-## Deploy on Netlify
-
-Connect this repository and use its `netlify.toml`: build command `npm run build`, publish directory `out`, Node 24. No environment secrets or Netlify Functions are required. The Next.js runtime adapter is disabled because the site is a static export. Browser workers and WASM must be served with the included headers. Deployment itself is not performed by this project setup.
-
-## What works
-
-- PDF, JPG, and PNG import, up to 100 MB; paginated thumbnail selection and a maximum of 10 selected pages per run.
-- Sequential worker-based processing with progress, cancellation, recoverable per-page errors, and completed-result retention.
-- Severity-100 protanopia, deuteranopia, and tritanopia simulations using Machado matrices; zoom and original/simulated comparison.
-- Deterministic sampled K-means, connected regions, local adjacency, CIEDE2000 comparisons, English OCR, and experimental 0–100 scoring.
-- Numbered issue overlays, measured evidence, source-edit guidance, preserve-first correction search, user approval, and reversion.
-- Local report PDF, corrected PDF, and simulated PDF downloads. Unchanged PDF pages are copied; transformed pages are rasterized visual review copies.
-- Desktop, tablet, and mobile layouts; keyboard controls and screen-reader labels; methodology and project context routes.
-
-All document content and results stay in tab memory. Refreshing or closing the tab clears the session. No analytics or document persistence are included. Synthetic sample diagrams are original PRISM fixtures; the existing commercial cover images are not included in the public app.
-
-## Research limitations
-
-The score is experimental, not a clinical measure or accessibility certification. See `/methodology/` for formulas, thresholds, weights, and missing-evidence behavior. Region analysis cannot identify semantic objects, establish that nearby labels have the right meaning, or reliably match distant legends. OCR/raster contrast is approximate; photographs and tiny features need manual review. Redundancy currently measures outline/nearby-label evidence, not semantic pattern/shape recognition.
-
-Automatic correction evaluates the three highest-risk color relationships, prioritizing outlines, patterns, then candidate recolors. It excludes detected text-bearing, large, or highly textured regions. Every proposed correction must improve the page score by at least five points and pass a spatial region-correspondence check for new major issues. These guards do not prove semantic correctness. Automatic text editing is deliberately unavailable; text issues get source-edit guidance. The UI always requires review and approval.
-
-Corrected or simulated pages lose selectable text, tags, and original vector structure. Keep the original for assistive technology. The experimental model still needs validation with people who have color vision deficiencies.
-
-## Structure
-
-- `src/app`: the four statically exported routes and global design tokens.
-- `src/components`: shared branding/session state, upload surface, selection, document viewer, and review workspace.
-- `src/lib`: color math, segmentation/scoring/corrections, local documents, English OCR, sample fixtures, and export.
-- `src/workers`: analysis and preview workers; CPU work stays off the UI thread.
-- `tests`: numerical regression tests and browser workflow tests.
-
-## Verify
+### Verify tests, typecheck, and production build
 
 ```sh
 npm run typecheck
 npm test
-npm run format:check
+npm run test:regression   # Runs 9-image parity checks when PRISM_REFERENCE_DIR is present
 npm run build
+npm start                 # Serves static out/ on http://127.0.0.1:4173
 ```
 
-Browser tests use an installed Chrome with Playwright. Start `npm run dev` in another terminal, then run `npm run test:e2e`. To exercise the static export and security policy instead, run `npm start`, set `PRISM_TEST_URL=http://127.0.0.1:4173`, and run `npm run test:e2e`.
+---
 
-The browser suite checks upload/selection, real PDF parsing, cancellation/retry, simulations, measured correction approval, downloaded PDF parsing/page preservation, OCR failure fallback, private network behavior, mobile reflow, and axe accessibility scans. Screenshots and downloads are written to the OS temporary directory.
+## Deploy on Netlify
 
-Color tests include published Sharma CIEDE2000 pairs and golden simulation outputs generated from Colorspacious 1.1.2 using the notebook conversion direction. See `tests/engine.test.ts`.
+`netlify.toml` is preconfigured for static export:
 
-## Design implementation
+- **Build command**: `npm run build`
+- **Publish directory**: `out`
+- **Node version**: `24` (`NETLIFY_NEXT_PLUGIN_SKIP = "true"`)
+- **Security headers**: Strict same-origin CSP (`worker-src 'self' blob:`, `'wasm-unsafe-eval'`), `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, `frame-ancestors 'none'`.
+- **No backend, secrets, or environment variables** are required. Private reference images and benchmark plates are **not** bundled into the public build.
 
-The interface follows the approved white/ink/blue visual system, editorial upload composition, three-pane desktop review workspace, and mobile page-picker/inspector layout. Intentional data-driven differences: scores/issues are computed, region names use IDs because semantics are unknown, and original reproducible educational fixtures replace the illustrative concept artwork. Corrected whole-PDF export replaces the concept's single-page action, as selected in the implementation plan.
+---
+
+## Project Structure
+
+- `src/lib/pcci/` — Independent, testable PCCI scientific computation modules (`types`, `colorspace`, `cvd`, `ciede2000`, `preprocess`, `kmeans`, `spatial`, `risk`, `analyze`, `serialize`).
+- `src/workers/pcci.worker.ts` & `src/workers/sim.worker.ts` — Background Web Workers for clustering/scoring (with intermediate feature caching for fast parameter recalculation) and full-resolution CVD rendering.
+- `src/components/pcci/` — Three-score PCCI dashboard, 4-image & side-by-side simulation viewer with risk localization overlay, "Why this score?" colour-pair table, CIELAB palette explorer, multi-page PDF summary table, and experimental research mode panel.
+- `src/app/` — Statically exported routes (`/`, `/analyze/`, `/methodology/`, `/about/`, plus archived `/figure/`).
+- `tests/pcci.test.ts` & `tests/pcci-regression.test.ts` — Automated unit, synthetic image, and reference regression tests.
+
+---
+
+## Research Limitations & Disclaimers
+
+- PRISM provides **experimental estimates** of potential colour confusion, not clinical diagnoses, probabilities, or accessibility certifications.
+- Computational CVD simulations cannot exactly reproduce every individual's visual perception.
+- A high PCCI score does not establish educational inaccessibility, and a low PCCI score does not guarantee educational accessibility.
+- Current scoring parameters (`K = 24`, `τ = 12`, `q = 0.10`) and provisional risk bands (`0–<20`, `20–<40`, `40–<60`, `60–100`) have not been clinically calibrated.
+- Contextual comprehension and compensatory visual cues (text labels, symbols, shapes, patterns, legends) require separate assessment.

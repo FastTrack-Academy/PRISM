@@ -2,68 +2,115 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import type { LocalDocument } from '@/lib/document';
 import { blobOf, rasterOf } from '@/lib/document';
-import type {
-  PageAnalysis,
-  PageRecord,
-  CorrectionProposal,
-  WorkerResponse,
-  TextRegion,
-} from '@/lib/types';
-import { SCORING } from '@/lib/engine';
+import {
+  DEFAULT_PCCI_CONFIG,
+  type PcciAnalysisResult,
+  type PcciConfig,
+} from '@/lib/pcci';
+import type { PcciWorkerResponse } from '@/workers/pcci.worker';
+
+export type PcciPageRecord = {
+  pageNumber: number;
+  analysis: PcciAnalysisResult;
+  labels: Int32Array;
+  compWidth: number;
+  compHeight: number;
+  thumbnail: Blob;
+};
 
 type State = {
   document: LocalDocument | null;
-  records: PageRecord[];
+  config: PcciConfig;
+  records: PcciPageRecord[];
   busy: boolean;
+  recalculating: boolean;
   status: string;
   completed: number;
   total: number;
   errors: string[];
   setDocument: (doc: LocalDocument) => Promise<void>;
-  analyzePages: (pages: number[]) => Promise<void>;
+  analyzePages: (pages: number[], overrideConfig?: PcciConfig) => Promise<void>;
+  updateConfig: (nextConfig: PcciConfig) => Promise<void>;
   cancel: () => void;
-  approve: (page: number, fix: CorrectionProposal) => void;
-  revert: (page: number, id?: string) => void;
 };
+
 const Context = createContext<State | null>(null);
+
 export const useSession = () => {
   const context = useContext(Context);
   if (!context) throw new Error('Session provider missing');
   return context;
 };
+
+function requiresReclustering(a: PcciConfig, b: PcciConfig): boolean {
+  return (
+    a.k !== b.k ||
+    a.maxEdge !== b.maxEdge ||
+    a.maxSamples !== b.maxSamples ||
+    a.seed !== b.seed ||
+    a.nInit !== b.nInit ||
+    a.batchSize !== b.batchSize ||
+    a.alphaCompositing !== b.alphaCompositing ||
+    a.spatialOffsets.length !== b.spatialOffsets.length ||
+    a.spatialOffsets.some((v, i) => v !== b.spatialOffsets[i])
+  );
+}
+
 export function SessionProvider({ children }: { children: ReactNode }) {
-  const [document, setDoc] = useState<LocalDocument | null>(null),
-    [records, setRecords] = useState<PageRecord[]>([]);
-  const [busy, setBusy] = useState(false),
-    [status, setStatus] = useState(''),
-    [completed, setCompleted] = useState(0),
-    [total, setTotal] = useState(0),
-    [errors, setErrors] = useState<string[]>([]);
-  const job = useRef(0),
-    worker = useRef<Worker | null>(null),
-    rejectWorker = useRef<((e: Error) => void) | null>(null),
-    busyRef = useRef(false),
-    documentRef = useRef<LocalDocument | null>(null);
+  const [document, setDoc] = useState<LocalDocument | null>(null);
+  const [config, setConfig] = useState<PcciConfig>({ ...DEFAULT_PCCI_CONFIG });
+  const [records, setRecords] = useState<PcciPageRecord[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [recalculating, setRecalculating] = useState(false);
+  const [status, setStatus] = useState('');
+  const [completed, setCompleted] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [errors, setErrors] = useState<string[]>([]);
+
+  const job = useRef(0);
+  const workerRef = useRef<Worker | null>(null);
+  const rejectWorker = useRef<((e: Error) => void) | null>(null);
+  const busyRef = useRef(false);
+  const documentRef = useRef<LocalDocument | null>(null);
+  const configRef = useRef<PcciConfig>({ ...DEFAULT_PCCI_CONFIG });
+  const recordsRef = useRef<PcciPageRecord[]>([]);
+
+  useEffect(() => {
+    recordsRef.current = records;
+  }, [records]);
+
+  const ensureWorker = () => {
+    if (!workerRef.current) {
+      workerRef.current = new Worker(new URL('../workers/pcci.worker.ts', import.meta.url));
+    }
+    return workerRef.current;
+  };
+
+  const resetWorker = () => {
+    workerRef.current?.terminate();
+    workerRef.current = null;
+  };
+
   const cancel = () => {
     job.current++;
-    worker.current?.terminate();
-    worker.current = null;
+    resetWorker();
     rejectWorker.current?.(new Error('Cancelled'));
     rejectWorker.current = null;
-    void import('@/lib/ocr').then((m) => m.terminateOCR());
     busyRef.current = false;
     setBusy(false);
-    setStatus('Analysis cancelled. Completed pages are available.');
+    setRecalculating(false);
+    setStatus('Analysis cancelled. Completed pages remain available.');
   };
+
   useEffect(
     () => () => {
       job.current++;
-      worker.current?.terminate();
+      resetWorker();
       void documentRef.current?.destroy();
-      void import('@/lib/ocr').then((m) => m.terminateOCR());
     },
     [],
   );
+
   async function setDocument(doc: LocalDocument) {
     cancel();
     if (documentRef.current !== doc) await documentRef.current?.destroy();
@@ -73,19 +120,75 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setErrors([]);
     setCompleted(0);
     setTotal(0);
-    setStatus('Choose up to 10 pages to analyze.');
+    setStatus(
+      doc.count === 1 ? 'Ready to analyze image.' : 'Choose up to 10 pages to analyze.',
+    );
   }
-  async function analyzePages(pages: number[]) {
-    if (!document || busyRef.current) return;
+
+  function runWorkerPage(
+    active: Worker,
+    id: string,
+    payload: Parameters<Worker['postMessage']>[0],
+    transfer: Transferable[],
+    onProgress: (message: string) => void,
+  ): Promise<{
+    result: PcciAnalysisResult;
+    labels: Int32Array;
+    compWidth: number;
+    compHeight: number;
+  }> {
+    return new Promise((resolve, reject) => {
+      rejectWorker.current = reject;
+      const timeout = setTimeout(() => {
+        active.terminate();
+        workerRef.current = null;
+        reject(new Error('This page exceeded the two-minute analysis limit.'));
+      }, 120000);
+      active.onerror = (event) => {
+        clearTimeout(timeout);
+        reject(new Error(event.message || 'PCCI analysis worker failed.'));
+      };
+      active.onmessage = (event: MessageEvent<PcciWorkerResponse>) => {
+        const message = event.data;
+        if (message.id !== id) return;
+        if (message.type === 'PROGRESS') {
+          onProgress(message.message);
+        } else {
+          clearTimeout(timeout);
+          rejectWorker.current = null;
+          if (message.type === 'ERROR') reject(new Error(message.message));
+          else
+            resolve({
+              result: message.result,
+              labels: message.labels,
+              compWidth: message.compWidth,
+              compHeight: message.compHeight,
+            });
+        }
+      };
+      active.postMessage(payload, transfer);
+    });
+  }
+
+  async function analyzePages(pages: number[], overrideConfig?: PcciConfig) {
+    const doc = documentRef.current;
+    if (!doc || busyRef.current) return;
+    const activeConfig = overrideConfig ?? configRef.current;
+    if (overrideConfig) {
+      configRef.current = activeConfig;
+      setConfig(activeConfig);
+    }
+
     const selected = [...new Set(pages)].sort((a, b) => a - b);
     if (
       !selected.length ||
       selected.length > 10 ||
-      selected.some((n) => n < 1 || n > document.count)
+      selected.some((n) => n < 1 || n > doc.count)
     ) {
       setErrors(['Select between 1 and 10 valid pages.']);
       return;
     }
+
     busyRef.current = true;
     setBusy(true);
     setRecords([]);
@@ -93,84 +196,76 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setCompleted(0);
     setTotal(selected.length);
     const token = ++job.current;
-    worker.current = new Worker(new URL('../workers/analysis.worker.ts', import.meta.url));
+
+    resetWorker();
+    const active = ensureWorker();
+
     try {
-      for (const number of selected) {
+      for (const pageNumber of selected) {
         if (job.current !== token) break;
         let canvas: HTMLCanvasElement | null = null;
         try {
-          setStatus(`Rendering page ${number}`);
-          canvas = await document.render(number, SCORING.maxEdge);
-          if (job.current !== token) break;
-          let textRegions: TextRegion[] = [],
-            warnings: string[] = [];
-          try {
-            textRegions = await document.nativeText(number, canvas.width, canvas.height);
-            if (!textRegions.length) {
-              const { recognizeText } = await import('@/lib/ocr');
-              textRegions = await recognizeText(canvas, (message) => {
-                if (job.current === token) setStatus(`Page ${number}: ${message}`);
-              });
-            }
-          } catch {
-            warnings = [
-              'English text recognition was unavailable. Visual-region analysis continued.',
-            ];
-          }
-          if (job.current !== token) break;
-          const raster = rasterOf(canvas);
-          const analysis = await new Promise<PageAnalysis>((resolve, reject) => {
-            rejectWorker.current = reject;
-            const active = worker.current!;
-            const timeout = setTimeout(() => {
-              active.terminate();
-              reject(
-                new Error('This page exceeded the two-minute analysis limit. Try a simpler page.'),
-              );
-            }, 120000);
-            active.onerror = (event) => {
-              clearTimeout(timeout);
-              reject(new Error(event.message || 'Analysis worker failed.'));
-            };
-            active.onmessage = (event: MessageEvent<WorkerResponse>) => {
-              const message = event.data;
-              if (message.id !== String(number)) return;
-              if (message.type === 'PAGE_PROGRESS') setStatus(`Page ${number}: ${message.message}`);
-              else {
-                clearTimeout(timeout);
-                rejectWorker.current = null;
-                if (message.type === 'ERROR') reject(new Error(message.message));
-                else resolve(message.result);
-              }
-            };
-            active.postMessage(
-              {
-                type: 'ANALYZE_PAGE',
-                id: String(number),
-                pageNumber: number,
-                raster,
-                textRegions,
-                warnings,
-              },
-              [raster.data.buffer],
-            );
+          setStatus(`Rendering page ${pageNumber}`);
+          // Preserve raw RGBA alpha for images so PCCI handles reference-compatible black compositing
+          // and separable Lanczos-3 downsampling at 640px.
+          const renderMax = doc.kind === 'image' ? Infinity : 1600;
+          canvas = await doc.render(pageNumber, renderMax, {
+            preserveAlpha: doc.kind === 'image',
           });
           if (job.current !== token) break;
+
+          const raster = rasterOf(canvas);
+          const id = `p-${pageNumber}`;
+          const imageName = doc.count > 1 ? `${doc.name} (Page ${pageNumber})` : doc.name;
+
+          const workerOutput = await runWorkerPage(
+            ensureWorker(),
+            id,
+            {
+              type: 'ANALYZE',
+              id,
+              imageName,
+              pageNumber,
+              width: raster.width,
+              height: raster.height,
+              data: raster.data,
+              config: activeConfig,
+            },
+            [raster.data.buffer],
+            (msg) => {
+              if (job.current === token) setStatus(`Page ${pageNumber}: ${msg}`);
+            },
+          );
+          if (job.current !== token) break;
+
           const thumb = window.document.createElement('canvas');
           thumb.width = 142;
-          thumb.height = Math.round((canvas.height / canvas.width) * 142);
-          thumb.getContext('2d')!.drawImage(canvas, 0, 0, thumb.width, thumb.height);
-          const thumbnail = await blobOf(thumb, 'image/jpeg', 0.8);
+          thumb.height = Math.max(1, Math.round((canvas.height / canvas.width) * 142));
+          const tctx = thumb.getContext('2d')!;
+          tctx.fillStyle = activeConfig.alphaCompositing === 'white' ? '#ffffff' : '#000000';
+          tctx.fillRect(0, 0, thumb.width, thumb.height);
+          tctx.drawImage(canvas, 0, 0, thumb.width, thumb.height);
+          const thumbnail = await blobOf(thumb, 'image/jpeg', 0.82);
           thumb.width = thumb.height = 0;
-          setRecords((prev) => [...prev, { analysis, thumbnail, approved: [] }]);
+
+          setRecords((prev) => [
+            ...prev,
+            {
+              pageNumber,
+              analysis: workerOutput.result,
+              labels: workerOutput.labels,
+              compWidth: workerOutput.compWidth,
+              compHeight: workerOutput.compHeight,
+              thumbnail,
+            },
+          ]);
         } catch (error) {
           if (job.current !== token) break;
           setErrors((prev) => [
             ...prev,
-            `Page ${number}: ${error instanceof Error ? error.message : 'Unable to analyze this page.'}`,
+            `Page ${pageNumber}: ${error instanceof Error ? error.message : 'Unable to analyze this page.'}`,
           ]);
-          worker.current?.terminate();
-          worker.current = new Worker(new URL('../workers/analysis.worker.ts', import.meta.url));
+          resetWorker();
         } finally {
           if (canvas) canvas.width = canvas.height = 0;
         }
@@ -178,48 +273,104 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       }
     } finally {
       if (job.current === token) {
-        worker.current?.terminate();
-        worker.current = null;
+        // Keep worker alive with cached features for fast experimental parameter rescoring!
+        void active;
         busyRef.current = false;
         setBusy(false);
         setStatus('Analysis completed locally');
-        void import('@/lib/ocr').then((m) => m.terminateOCR());
       }
     }
   }
-  function approve(page: number, fix: CorrectionProposal) {
-    setRecords((prev) =>
-      prev.map((r) =>
-        r.analysis.pageNumber !== page
-          ? r
-          : { ...r, approved: [...r.approved.filter((f) => f.regionId !== fix.regionId), fix] },
-      ),
-    );
+
+  async function updateConfig(nextConfig: PcciConfig) {
+    const prevConfig = configRef.current;
+    configRef.current = nextConfig;
+    setConfig(nextConfig);
+
+    const currentRecords = recordsRef.current;
+    const doc = documentRef.current;
+    if (!doc || !currentRecords.length) return;
+
+    if (requiresReclustering(prevConfig, nextConfig)) {
+      const pageNums = currentRecords.map((r) => r.pageNumber);
+      await analyzePages(pageNums, nextConfig);
+      return;
+    }
+
+    // Fast path: rescore cached features without rerunning MiniBatch K-means!
+    if (busyRef.current) return;
+    busyRef.current = true;
+    setRecalculating(true);
+    setStatus('Recalculating PCCI scores with updated parameters…');
+    const token = ++job.current;
+
+    try {
+      const updated: PcciPageRecord[] = [];
+      for (const rec of currentRecords) {
+        if (job.current !== token) break;
+        const id = `p-${rec.pageNumber}`;
+        const imageName =
+          doc.count > 1 ? `${doc.name} (Page ${rec.pageNumber})` : doc.name;
+        try {
+          const out = await runWorkerPage(
+            ensureWorker(),
+            id,
+            {
+              type: 'RESCORE',
+              id,
+              imageName,
+              pageNumber: rec.pageNumber,
+              config: nextConfig,
+            },
+            [],
+            () => {},
+          );
+          updated.push({
+            ...rec,
+            analysis: out.result,
+            labels: out.labels,
+            compWidth: out.compWidth,
+            compHeight: out.compHeight,
+          });
+        } catch {
+          // Fallback to full re-analysis if worker cache was reset
+          busyRef.current = false;
+          setRecalculating(false);
+          await analyzePages(
+            currentRecords.map((r) => r.pageNumber),
+            nextConfig,
+          );
+          return;
+        }
+      }
+      if (job.current === token) {
+        setRecords(updated);
+        setStatus('Recalculation complete');
+      }
+    } finally {
+      if (job.current === token) {
+        busyRef.current = false;
+        setRecalculating(false);
+      }
+    }
   }
-  function revert(page: number, id?: string) {
-    setRecords((prev) =>
-      prev.map((r) =>
-        r.analysis.pageNumber !== page
-          ? r
-          : { ...r, approved: id ? r.approved.filter((f) => f.id !== id) : [] },
-      ),
-    );
-  }
+
   return (
     <Context.Provider
       value={{
         document,
+        config,
         records,
         busy,
+        recalculating,
         status,
         completed,
         total,
         errors,
         setDocument,
         analyzePages,
+        updateConfig,
         cancel,
-        approve,
-        revert,
       }}
     >
       {children}

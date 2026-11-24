@@ -1,0 +1,73 @@
+item,family,method,profile,legacyScore,grade,examined,warnings,shown,losses,hits,retain,retainFlagged,extra,runtimeMs,topPairs
+bar_stacked,gallery,A,protan,97,Low measured concern,17,0,0,0,0,1,0,0,124,
+bar_stacked,gallery,A,deutan,97,Low measured concern,17,0,0,0,0,1,0,0,124,
+bar_stacked,gallery,A,tritan,97,Low measured concern,17,0,0,0,0,1,0,0,124,
+bar_stacked,gallery,B,protan,,Low measured concern,24,0,0,0,0,1,0,0,111,
+bar_stacked,gallery,B,deutan,,Low measured concern,24,0,0,0,0,1,0,0,111,
+bar_stacked,gallery,B,tritan,,Low measured concern,24,0,0,0,0,1,0,0,111,
+bar_stacked,gallery,C,protan,,Low measured concern,959,0,0,0,0,1,0,0,283,
+bar_stacked,gallery,C,deutan,,Low measured concern,959,0,0,0,0,1,0,0,283,
+bar_stacked,gallery,C,tritan,,Low measured concern,959,0,0,0,0,1,0,0,283,
+stackplot_demo,gallery,A,protan,61,High concern,18,1,1,0,0,1,0,1,117,6-11
+stackplot_demo,gallery,A,deutan,61,High concern,18,1,1,1,1,0,0,0,117,5-6
+stackplot_demo,gallery,A,tritan,61,Low measured concern,18,0,0,0,0,1,0,0,117,
+stackplot_demo,gallery,B,protan,,High concern,34,2,2,0,0,1,0,2,56,6-11|8-9
+stackplot_demo,gallery,B,deutan,,High concern,34,2,2,1,1,0,0,1,56,5-6|7-8
+stackplot_demo,gallery,B,tritan,,Low measured concern,34,0,0,0,0,1,0,0,56,
+stackplot_demo,gallery,C,protan,,High concern,1810,8,3,0,0,1,0,3,255,1797-1893|1686-1764|1664-1754
+stackplot_demo,gallery,C,deutan,,High concern,1810,10,3,1,0,0,0,3,255,514-579|504-514|1314-1418
+stackplot_demo,gallery,C,tritan,,Low measured concern,1810,0,0,0,0,1,0,0,255,
+horizontal_barchart_distribution,gallery,A,protan,77,High concern,71,4,3,0,0,0,0,,51,9-10|6-9|3-35
+horizontal_barchart_distribution,gallery,A,deutan,77,High concern,71,4,3,0,0,0,0,,51,9-10|6-9|3-35
+horizontal_barchart_distribution,gallery,A,tritan,77,High concern,71,3,3,0,0,1,0,3,51,9-10|6-9|7-8
+horizontal_barchart_distribution,gallery,B,protan,,Review,101,2,2,0,0,0,0,,33,3-35|3-20
+horizontal_barchart_distribution,gallery,B,deutan,,Review,101,2,2,0,0,0,0,,33,3-35|3-20
+horizontal_barchart_distribution,gallery,B,tritan,,High concern,101,3,3,0,0,1,0,3,33,20-23|33-35|19-22
+horizontal_barchart_distribution,gallery,C,protan,,Review,4043,2,2,0,0,0,0,,183,597-688|979-994
+horizontal_barchart_distribution,gallery,C,deutan,,Review,4043,3,3,0,0,0,0,,183,597-688|1527-1529|979-994
+horizontal_barchart_distribution,gallery,C,tritan,,High concern,4043,22,3,0,0,1,0,3,183,589-680|597-687|966-1012
+bar_label_demo,gallery,A,protan,97,Low measured concern,17,0,0,0,0,1,0,0,55,
+bar_label_demo,gallery,A,deutan,97,Low measured concern,17,0,0,0,0,1,0,0,55,
+bar_label_demo,gallery,A,tritan,97,Low measured concern,17,0,0,0,0,1,0,0,55,
+bar_label_demo,gallery,B,protan,,Low measured concern,24,0,0,0,0,1,0,0,32,
+bar_label_demo,gallery,B,deutan,,Low measured concern,24,0,0,0,0,1,0,0,32,
+bar_label_demo,gallery,B,tritan,,Low measured concern,24,0,0,0,0,1,0,0,32,
+bar_label_demo,gallery,C,protan,,Low measured concern,1287,0,0,0,0,1,0,0,178,
+bar_label_demo,gallery,C,deutan,,Low measured concern,1287,0,0,0,0,1,0,0,178,
+bar_label_demo,gallery,C,tritan,,Low measured concern,1287,0,0,0,0,1,0,0,178,
+pie_features,gallery,A,protan,71,High concern,8,1,1,0,0,1,0,1,43,1-3
+pie_features,gallery,A,deutan,71,High concern,8,1,1,1,1,0,0,0,43,3-4
+pie_features,gallery,A,tritan,71,Low measured concern,8,0,0,0,0,1,0,0,43,
+pie_features,gallery,B,protan,,High concern,10,1,1,0,0,1,0,1,31,1-3
+pie_features,gallery,B,deutan,,High concern,10,1,1,1,1,0,0,0,31,3-4
+pie_features,gallery,B,tritan,,Low measured concern,10,0,0,0,0,1,0,0,31,
+pie_features,gallery,C,protan,,High concern,795,5,3,0,0,1,0,3,168,732-823|822-919|921-1008
+pie_features,gallery,C,deutan,,High concern,795,8,3,1,0,0,0,3,168,972-983|1270-1281|972-1009
+pie_features,gallery,C,tritan,,Low measured concern,795,0,0,0,0,1,0,0,168,
+grouped_barplot,gallery,A,protan,96,Low measured concern,26,0,0,0,0,1,0,0,34,
+grouped_barplot,gallery,A,deutan,96,Low measured concern,26,0,0,0,0,1,0,0,34,
+grouped_barplot,gallery,A,tritan,96,Low measured concern,26,0,0,0,0,1,0,0,34,
+grouped_barplot,gallery,B,protan,,Low measured concern,81,0,0,0,0,1,0,0,28,
+grouped_barplot,gallery,B,deutan,,Low measured concern,81,0,0,0,0,1,0,0,28,
+grouped_barplot,gallery,B,tritan,,Low measured concern,81,0,0,0,0,1,0,0,28,
+grouped_barplot,gallery,C,protan,,Low measured concern,2135,0,0,0,0,1,0,0,185,
+grouped_barplot,gallery,C,deutan,,Low measured concern,2135,0,0,0,0,1,0,0,185,
+grouped_barplot,gallery,C,tritan,,Low measured concern,2135,0,0,0,0,1,0,0,185,
+horizontal_boxplot,gallery,A,protan,97,Low measured concern,6,0,0,0,0,1,0,0,37,
+horizontal_boxplot,gallery,A,deutan,97,Low measured concern,6,0,0,0,0,1,0,0,37,
+horizontal_boxplot,gallery,A,tritan,97,Low measured concern,6,0,0,0,0,1,0,0,37,
+horizontal_boxplot,gallery,B,protan,,Low measured concern,10,0,0,0,0,1,0,0,27,
+horizontal_boxplot,gallery,B,deutan,,Low measured concern,10,0,0,0,0,1,0,0,27,
+horizontal_boxplot,gallery,B,tritan,,Low measured concern,10,0,0,0,0,1,0,0,27,
+horizontal_boxplot,gallery,C,protan,,High concern,231,1,1,0,0,1,0,1,170,1346-1392
+horizontal_boxplot,gallery,C,deutan,,Review,231,1,1,0,0,1,0,1,170,1346-1392
+horizontal_boxplot,gallery,C,tritan,,Low measured concern,231,0,0,0,0,1,0,0,170,
+scatterplot_categorical,gallery,A,protan,93,Low measured concern,38,0,0,0,0,1,0,0,27,
+scatterplot_categorical,gallery,A,deutan,93,Low measured concern,38,0,0,0,0,1,0,0,27,
+scatterplot_categorical,gallery,A,tritan,93,Low measured concern,38,0,0,0,0,1,0,0,27,
+scatterplot_categorical,gallery,B,protan,,Low measured concern,69,0,0,0,0,1,0,0,20,
+scatterplot_categorical,gallery,B,deutan,,Low measured concern,69,0,0,0,0,1,0,0,20,
+scatterplot_categorical,gallery,B,tritan,,Low measured concern,69,0,0,0,0,1,0,0,20,
+scatterplot_categorical,gallery,C,protan,,Review,3665,4,3,0,0,1,0,3,115,1348-1429|431-562|1361-1404
+scatterplot_categorical,gallery,C,deutan,,High concern,3665,4,3,0,0,1,0,3,115,1348-1429|1361-1404|1404-1519
+scatterplot_categorical,gallery,C,tritan,,Review,3665,1,1,0,0,1,0,1,115,431-518

@@ -1,0 +1,39 @@
+{
+  "textbook-transport": {
+    "question":"Which of these two paths carries sodium?",
+    "names":["SODIUM","POTASSIUM"],
+    "key":[[125,838],[511,838]], "marks":[[822,595],[822,355]],
+    "windows":[[595,600,810,642],[595,307,852,350]]
+  },
+  "textbook-map": {
+    "question":"Which of these two northern areas is wetland?",
+    "names":["WETLAND","FARMLAND"],
+    "key":[[310,835],[652,835]], "marks":[[175,355],[615,355]],
+    "windows":[[144,297,315,341],[570,278,775,324]]
+  },
+  "science-chart": {
+    "question":"Which year-six endpoint belongs to the forest series?",
+    "names":["FOREST","MEADOW"],
+    "key":[[294,962],[610,962]], "marks":[[818,376],[818,406]],
+    "windows":[[672,284,824,330],[672,446,849,490]]
+  },
+  "science-cells": {
+    "question":"Which of cells 1 and 6 contains both markers? Compare the center colors of these two A-bearing cells.",
+    "names":["A+B","A ONLY"],
+    "key":[[505,964],[235,964]], "marks":[[190,327],[208,479]],
+    "windows":[[224,275,285,306],[242,427,303,458]]
+  },
+  "humanities-timeline": {
+    "question":"Which of the first two milestones records an arrival?",
+    "names":["ARRIVAL","DEPARTURE"],
+    "key":[[260,977],[523,977]], "marks":[[155,355],[155,475]],
+    "windows":[[750,325,923,365],[750,445,923,485]]
+  },
+  "humanities-map": {
+    "question":"Which of these two routes leads to oral history?",
+    "names":["ORAL HISTORY ROUTE","ARCHIVES ROUTE"],
+    "key":[[273,960],[597,960]], "marks":[[450,555],[235,465]],
+    "windows":[[427,565,681,608],[427,473,681,516]]
+  }
+}
+

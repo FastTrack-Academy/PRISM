@@ -48,20 +48,23 @@ function SamplePreview({ mode }: { mode: Vision }) {
     />
   );
 }
+
 export default function Landing() {
-  const { setDocument } = useSession(),
-    router = useRouter(),
-    input = useRef<HTMLInputElement>(null);
-  const [busy, setBusy] = useState(false),
-    [error, setError] = useState(''),
-    [drag, setDrag] = useState(false);
+  const { setDocument } = useSession();
+  const router = useRouter();
+  const input = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [drag, setDrag] = useState(false);
+
   async function open(file?: File) {
     if (!file || busy) return;
     setBusy(true);
     setError('');
     try {
       const { openLocalFile } = await import('@/lib/document');
-      await setDocument(await openLocalFile(file));
+      const doc = await openLocalFile(file);
+      await setDocument(doc);
       router.push('/analyze/');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'This file could not be opened.');
@@ -70,6 +73,7 @@ export default function Landing() {
       if (input.current) input.current.value = '';
     }
   }
+
   async function sample() {
     setBusy(true);
     try {
@@ -80,6 +84,7 @@ export default function Landing() {
       setBusy(false);
     }
   }
+
   return (
     <>
       <SiteHeader active="analyze" />
@@ -91,8 +96,8 @@ export default function Landing() {
               more clearly.
             </h1>
             <p>
-              Upload a textbook PDF or page image to simulate color vision differences, measure
-              confusing regions, and review practical fixes.
+              Upload a textbook image or PDF to compute the Perceptual Color Confusion Index (PCCI)
+              independently for Deuteranopia, Protanopia, and Tritanopia.
             </p>
           </div>
           <div className={styles.uploadColumn}>
@@ -118,7 +123,9 @@ export default function Landing() {
                 <UploadCloud className={styles.cloud} size={37} strokeWidth={1.5} />
               </div>
               <h2>Drop a PDF, JPG, or PNG here</h2>
-              <p className={styles.fileHint}>Up to 100 MB · Analyze up to 10 pages</p>
+              <p className={styles.fileHint}>
+                Up to 100 MB · Independent PCCI scores (0–100) · No account required
+              </p>
               <input
                 ref={input}
                 className="visuallyHidden"
@@ -129,19 +136,25 @@ export default function Landing() {
                 onChange={(e) => void open(e.target.files?.[0])}
               />
               <button
+                type="button"
                 className="button primary"
                 disabled={busy}
                 onClick={() => input.current?.click()}
               >
                 <FolderOpen size={20} />
-                {busy ? 'Opening your textbook…' : 'Choose file'}
+                {busy ? 'Opening your file…' : 'Choose file'}
               </button>
               <p className={styles.privacy}>
                 <LockKeyhole size={18} />
                 Processed privately in your browser
               </p>
             </div>
-            <button className={styles.sampleLink} disabled={busy} onClick={() => void sample()}>
+            <button
+              type="button"
+              className={styles.sampleLink}
+              disabled={busy}
+              onClick={() => void sample()}
+            >
               Try the sample textbook <ArrowRight size={20} />
             </button>
             <div aria-live="polite">
@@ -156,18 +169,18 @@ export default function Landing() {
             {[
               {
                 icon: FileUp,
-                title: 'Upload pages',
-                text: 'Add a PDF or image. Pages stay on your device.',
+                title: 'Upload image or PDF',
+                text: 'Add a JPG, PNG, or multi-page PDF. Files stay on your device.',
               },
               {
                 icon: Eye,
-                title: 'Compare simulations',
-                text: 'Explore how the same page may appear across color vision differences.',
+                title: 'Compare CVD simulations',
+                text: 'Review Machado (2009) & Brettel (1997) full-dichromacy views with PCCI risk scores.',
               },
               {
                 icon: Scan,
-                title: 'Improve confusing regions',
-                text: 'Review flagged areas and get practical suggestions to improve clarity.',
+                title: 'Inspect & export evidence',
+                text: 'Examine confusing colour pairs, CIELAB palettes, spatial masks, and CSV/JSON/PNG exports.',
               },
             ].map(({ icon: Icon, title, text }, i) => (
               <li key={title}>
@@ -189,7 +202,7 @@ export default function Landing() {
             </span>
           </div>
           <div className={styles.previewGrid}>
-            {(['original', 'protan', 'deutan', 'tritan'] as Vision[]).map((mode) => (
+            {(['original', 'deutan', 'protan', 'tritan'] as Vision[]).map((mode) => (
               <div className={styles.previewCell} key={mode}>
                 <h3>
                   <Eye size={19} />
@@ -202,13 +215,16 @@ export default function Landing() {
             ))}
           </div>
           <div className={styles.previewNote}>
-            <Check size={15} /> Actual model simulations of an original PRISM sample · individual
-            experiences vary
+            <Check size={15} /> Full-dichromacy simulations (Machado 2009 for Deuteranopia &amp;
+            Protanopia; Brettel 1997 for Tritanopia) · individual experiences vary
           </div>
         </section>
         <footer className={styles.footer}>
           <ShieldCheck size={24} strokeWidth={1.5} />
-          <span>Educational accessibility analysis — not a medical diagnostic.</span>
+          <span>
+            PRISM provides experimental PCCI estimates of potential colour confusion — not a
+            clinical diagnostic or accessibility certification.
+          </span>
         </footer>
       </main>
     </>

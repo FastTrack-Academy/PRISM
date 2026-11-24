@@ -58,6 +58,7 @@ export type PageAnalysis = {
   width: number;
   height: number;
   score: number | null;
+  examinedColorPairs?: number;
   separation: number | null;
   contrast: number | null;
   redundancy: number | null;

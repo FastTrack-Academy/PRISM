@@ -6,49 +6,49 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
-  CheckCircle2,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Download,
-  Eye,
+  FileCode2,
+  FileImage,
+  FileSpreadsheet,
   FileText,
+  FlaskConical,
   Info,
-  Layers,
   LoaderCircle,
   LockKeyhole,
-  Minus,
   Plus,
   RotateCcw,
-  Scan,
   ShieldCheck,
-  X,
 } from 'lucide-react';
 import { Brand, SiteHeader } from './brand';
 import { useSession } from './session';
-import { band } from '@/lib/engine';
-import { hex } from '@/lib/color';
 import {
-  VISION_LABELS,
-  type ConfusionIssue,
-  type CorrectionProposal,
-  type PageRecord,
-  type Vision,
-} from '@/lib/types';
-import { blobOf, rasterOf, type LocalDocument } from '@/lib/document';
-import styles from './workspace.module.css';
+  DEFAULT_PCCI_CONFIG,
+  RESEARCH_DISCLAIMERS,
+  type CvdType,
+  type PcciColorPair,
+} from '@/lib/pcci';
+import { blobOf, type LocalDocument } from '@/lib/document';
+import { RiskScoreCards } from './pcci/RiskScoreCards';
+import { SimulationViewer, type SimulationCache } from './pcci/SimulationViewer';
+import { WhyThisScore } from './pcci/WhyThisScore';
+import { PaletteExplorer } from './pcci/PaletteExplorer';
+import { PdfSummaryTable } from './pcci/PdfSummaryTable';
+import { ResearchParamsPanel } from './pcci/ResearchParamsPanel';
+import styles from './pcci/dashboard.module.css';
 
 function Thumb({ doc, page, blob }: { doc: LocalDocument; page: number; blob?: Blob }) {
   const [src, setSrc] = useState('');
   useEffect(() => {
-    let live = true,
-      url = '';
+    let live = true;
+    let url = '';
     (async () => {
       try {
         let b = blob;
         if (!b) {
-          const c = await doc.render(page, 175);
-          b = await blobOf(c, 'image/jpeg', 0.75);
+          const c = await doc.render(page, 175, { preserveAlpha: false, background: 'white' });
+          b = await blobOf(c, 'image/jpeg', 0.78);
           c.width = c.height = 0;
         }
         if (live) {
@@ -62,48 +62,29 @@ function Thumb({ doc, page, blob }: { doc: LocalDocument; page: number; blob?: B
       if (url) URL.revokeObjectURL(url);
     };
   }, [doc, page, blob]);
-  // User-local object URLs intentionally bypass Next's image loader.
-  return src ? <img src={src} alt="" /> : <FileText size={30} aria-hidden="true" />;
-}
-function Score({ value, small = false }: { value: number | null; small?: boolean }) {
-  return (
-    <div className={`${styles.score} ${small ? styles.smallScore : ''}`}>
-      <svg viewBox="0 0 44 44" aria-hidden="true">
-        <circle cx="22" cy="22" r="18" fill="none" stroke="#e5e9f0" strokeWidth="4" />
-        <circle
-          cx="22"
-          cy="22"
-          r="18"
-          fill="none"
-          stroke="var(--blue)"
-          strokeWidth="4"
-          strokeDasharray={`${(value ?? 0) * 1.131} 113.1`}
-          transform="rotate(-90 22 22)"
-          strokeLinecap="round"
-        />
-      </svg>
-      <strong>{value ?? '—'}</strong>
-      <span>/ 100</span>
-    </div>
-  );
+
+  return src ? <img src={src} alt="" /> : <FileText size={26} aria-hidden="true" />;
 }
 
 function Selection({ doc }: { doc: LocalDocument }) {
-  const session = useSession(),
-    [selected, setSelected] = useState<number[]>(doc.count === 1 ? [1] : []),
-    [batch, setBatch] = useState(0),
-    [range, setRange] = useState(''),
-    [error, setError] = useState('');
+  const session = useSession();
+  const [selected, setSelected] = useState<number[]>(doc.count === 1 ? [1] : []);
+  const [batch, setBatch] = useState(0);
+  const [range, setRange] = useState('');
+  const [error, setError] = useState('');
+
   const pages = Array.from(
     { length: Math.min(12, doc.count - batch * 12) },
     (_, i) => batch * 12 + i + 1,
   );
+
   function toggle(n: number) {
     setError('');
     if (selected.includes(n)) setSelected(selected.filter((p) => p !== n));
     else if (selected.length < 10) setSelected([...selected, n]);
     else setError('You can analyze up to 10 pages per run. Deselect a page first.');
   }
+
   function selectRange() {
     const result = new Set<number>();
     for (const part of range.split(',')) {
@@ -112,8 +93,8 @@ function Selection({ doc }: { doc: LocalDocument }) {
         setError('Use page numbers or ranges, such as 1, 3-5.');
         return;
       }
-      const start = Number(match[1]),
-        end = Number(match[2] || match[1]);
+      const start = Number(match[1]);
+      const end = Number(match[2] || match[1]);
       if (start < 1 || end > doc.count || end < start || end - start > 10) {
         setError(`Choose valid page numbers between 1 and ${doc.count}, up to 10 total.`);
         return;
@@ -127,29 +108,29 @@ function Selection({ doc }: { doc: LocalDocument }) {
     setSelected([...result]);
     setError('');
   }
+
   return (
     <>
       <SiteHeader active="analyze" />
       <main id="main" className={styles.selection}>
-        <Link href="/" className={styles.back}>
-          <ArrowLeft size={17} />
+        <Link href="/" className="textLink" style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}>
+          <ArrowLeft size={16} />
           Choose a different file
         </Link>
         <div className={styles.selectionHeading}>
           <div>
-            <h1>Choose the pages to explore.</h1>
+            <h1>Choose the pages to analyze.</h1>
             <p>
-              {doc.name}{' '}
-              <span>
-                · {doc.count} {doc.count === 1 ? 'page' : 'pages'}
-              </span>
+              {doc.name} · {doc.count} {doc.count === 1 ? 'page' : 'pages'}
             </p>
           </div>
-          <LockKeyhole size={26} strokeWidth={1.5} />
+          <LockKeyhole size={24} strokeWidth={1.5} aria-hidden="true" />
         </div>
-        <p className={styles.selectionHelp}>
-          Start with diagrams, charts, or maps. Select up to 10 pages for this analysis.
+        <p className="note" style={{ fontSize: 13 }}>
+          Select up to 10 pages to compute independent Deuteranopia, Protanopia, and Tritanopia PCCI
+          risk scores locally in your browser.
         </p>
+
         <div className={styles.selectionTools}>
           <div>
             <label htmlFor="page-range">Page numbers</label>
@@ -162,11 +143,12 @@ function Selection({ doc }: { doc: LocalDocument }) {
                 if (e.key === 'Enter') selectRange();
               }}
             />
-            <button className="button" onClick={selectRange} disabled={!range}>
+            <button type="button" className="button" onClick={selectRange} disabled={!range}>
               Select
             </button>
           </div>
           <button
+            type="button"
             className="textLink"
             onClick={() => {
               setSelected(pages.slice(0, 10));
@@ -176,15 +158,18 @@ function Selection({ doc }: { doc: LocalDocument }) {
             Select first {Math.min(10, pages.length)} on this view
           </button>
         </div>
+
         {error && (
           <p role="alert" className="errorMessage">
             {error}
           </p>
         )}
+
         <div className={styles.pageGrid}>
           {pages.map((n) => (
             <button
               key={n}
+              type="button"
               className={`${styles.pageOption} ${selected.includes(n) ? styles.selectedPage : ''}`}
               aria-pressed={selected.includes(n)}
               aria-label={`Select page ${n}`}
@@ -193,879 +178,596 @@ function Selection({ doc }: { doc: LocalDocument }) {
               <div className={styles.selectionThumb}>
                 <Thumb doc={doc} page={n} />
                 <span className={styles.checkbox}>
-                  {selected.includes(n) && <Check size={15} />}
+                  {selected.includes(n) && <Check size={14} />}
                 </span>
               </div>
-              <span>Page {n}</span>
+              <span style={{ fontSize: 13, fontWeight: 600 }}>Page {n}</span>
             </button>
           ))}
         </div>
+
         {doc.count > 12 && (
           <div className={styles.pagination}>
-            <button className="button" disabled={!batch} onClick={() => setBatch((b) => b - 1)}>
-              <ChevronLeft size={18} />
+            <button
+              type="button"
+              className="button"
+              disabled={!batch}
+              onClick={() => setBatch((b) => b - 1)}
+            >
+              <ChevronLeft size={17} />
               Previous
             </button>
-            <span>
+            <span className="note" style={{ fontSize: 13 }}>
               Pages {batch * 12 + 1}–{Math.min(doc.count, batch * 12 + 12)} of {doc.count}
             </span>
             <button
+              type="button"
               className="button"
               disabled={batch * 12 + 12 >= doc.count}
               onClick={() => setBatch((b) => b + 1)}
             >
               Next
-              <ChevronRight size={18} />
+              <ChevronRight size={17} />
             </button>
           </div>
         )}
+
         <div className={styles.selectionFooter}>
           <span>
             <strong>{selected.length}</strong> of 10 pages selected
           </span>
           <button
+            type="button"
             className="button primary"
             disabled={!selected.length || session.busy}
             onClick={() => void session.analyzePages(selected)}
           >
             Analyze selected pages
-            <ArrowRight size={18} />
+            <ArrowRight size={17} />
           </button>
         </div>
-        <p className="note">
-          Your file stays in this tab. Closing or refreshing the tab clears your session.
+
+        <p className="note" style={{ marginTop: 14 }}>
+          Your document stays in tab memory and is never uploaded to a server.
         </p>
       </main>
     </>
   );
 }
 
-function Viewer({
-  doc,
-  record,
-  mode,
-  issue,
-  preview,
-  compare,
-  onMeasurement,
-}: {
-  doc: LocalDocument;
-  record: PageRecord;
-  mode: Vision;
-  issue?: ConfusionIssue;
-  preview: CorrectionProposal | null;
-  compare: boolean;
-  onMeasurement: (score: number | null, major: number) => void;
-}) {
-  const original = useRef<HTMLCanvasElement>(null),
-    display = useRef<HTMLCanvasElement>(null),
-    scroll = useRef<HTMLDivElement>(null),
-    [fitWidth, setFitWidth] = useState(600),
-    [busy, setBusy] = useState(true),
-    [error, setError] = useState(''),
-    [zoom, setZoom] = useState(100),
-    [split, setSplit] = useState(50);
-  useEffect(() => {
-    const el = scroll.current;
-    if (!el) return;
-    const observer = new ResizeObserver(() => {
-      const padding = window.innerWidth > 950 ? 44 : 16;
-      const width = el.clientWidth - padding;
-      setFitWidth(
-        window.innerWidth > 950
-          ? Math.min(
-              width,
-              ((el.clientHeight - 24) * record.analysis.width) / record.analysis.height,
-            )
-          : width,
-      );
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [record.analysis]);
-  const fixes = preview
-    ? [...record.approved.filter((f) => f.regionId !== preview.regionId), preview]
-    : record.approved;
-  const key = fixes.map((f) => f.id).join(',');
-  useEffect(() => {
-    let live = true;
-    const worker = new Worker(new URL('../workers/view.worker.ts', import.meta.url));
-    setBusy(true);
-    setError('');
-    (async () => {
-      try {
-        const c = await doc.render(record.analysis.pageNumber, 1400);
-        if (!live) {
-          c.width = c.height = 0;
-          return;
-        }
-        const r = rasterOf(c);
-        if (original.current) {
-          original.current.width = r.width;
-          original.current.height = r.height;
-          original.current.getContext('2d')!.drawImage(c, 0, 0);
-        }
-        c.width = c.height = 0;
-        worker.onmessage = (e) => {
-          if (!live) return;
-          if (e.data.error) {
-            setError(e.data.error);
-            setBusy(false);
-            return;
-          }
-          const { raster, score, major } = e.data;
-          const canvas = display.current;
-          if (canvas) {
-            canvas.width = raster.width;
-            canvas.height = raster.height;
-            canvas
-              .getContext('2d')!
-              .putImageData(
-                new ImageData(new Uint8ClampedArray(raster.data), raster.width, raster.height),
-                0,
-                0,
-              );
-          }
-          setBusy(false);
-          onMeasurement(score, major);
-        };
-        worker.onerror = () => {
-          if (live) {
-            setBusy(false);
-            setError('The preview could not be rendered. Choose another page and try again.');
-          }
-        };
-        worker.postMessage({ raster: r, analysis: record.analysis, fixes, mode }, [r.data.buffer]);
-      } catch (e) {
-        if (live) {
-          setBusy(false);
-          setError(e instanceof Error ? e.message : 'Unable to display page.');
-        }
-      }
-    })();
-    return () => {
-      live = false;
-      worker.terminate();
-    };
-    // Fix IDs identify immutable proposals, so changing the array alone need not rerender pixels.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [doc, record.analysis, mode, key]);
-  const a = record.analysis;
-  const box =
-    issue?.kind === 'color'
-      ? a.regions[issue.regionIds.reduce((x, y) => (a.regions[x].area < a.regions[y].area ? x : y))]
-          .box
-      : issue?.box;
-  return (
-    <div className={styles.viewer}>
-      <div className={styles.viewerTitle}>
-        <h1>Page {a.pageNumber}</h1>
-        <span>
-          {preview
-            ? 'Correction preview'
-            : record.approved.length
-              ? 'Approved changes'
-              : VISION_LABELS[mode]}
-        </span>
-        <div className={styles.zoom}>
-          <button
-            aria-label="Zoom out"
-            disabled={zoom <= 75}
-            onClick={() => setZoom((z) => z - 25)}
-          >
-            <Minus size={16} />
-          </button>
-          <span>{zoom}%</span>
-          <button
-            aria-label="Zoom in"
-            disabled={zoom >= 200}
-            onClick={() => setZoom((z) => z + 25)}
-          >
-            <Plus size={16} />
-          </button>
-        </div>
-      </div>
-      <div
-        ref={scroll}
-        className={styles.canvasScroll}
-        tabIndex={0}
-        role="region"
-        aria-label="Textbook page, scroll to read"
-      >
-        <div
-          className={styles.paper}
-          style={{ width: (fitWidth * zoom) / 100, aspectRatio: `${a.width}/${a.height}` }}
-        >
-          <canvas
-            ref={original}
-            className={styles.originalCanvas}
-            role="img"
-            aria-label={`Original textbook page ${a.pageNumber}`}
-          />
-          <canvas
-            ref={display}
-            style={{ clipPath: compare ? `inset(0 0 0 ${split}%)` : undefined }}
-            role="img"
-            aria-label={`${VISION_LABELS[mode]} ${preview || record.approved.length ? 'corrected ' : ''}page ${a.pageNumber}`}
-          />
-          {compare && (
-            <div className={styles.splitLine} style={{ left: `${split}%` }}>
-              <span>‹ ›</span>
-            </div>
-          )}
-          {box && (
-            <div
-              className={styles.issueOutline}
-              style={{
-                left: `${(box.x / a.width) * 100}%`,
-                top: `${(box.y / a.height) * 100}%`,
-                width: `${(box.width / a.width) * 100}%`,
-                height: `${(box.height / a.height) * 100}%`,
-              }}
-            >
-              <span>{a.issues.indexOf(issue!) + 1}</span>
-            </div>
-          )}
-          {busy && (
-            <div className={styles.canvasLoading}>
-              <LoaderCircle size={23} className={styles.spin} />
-              <span>Preparing page…</span>
-            </div>
-          )}
-        </div>
-      </div>
-      {error && (
-        <p className="errorMessage" role="alert">
-          {error}
-        </p>
-      )}
-      {compare && (
-        <div className={styles.compareSlider}>
-          <span>Original</span>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={split}
-            onChange={(e) => setSplit(Number(e.target.value))}
-            aria-label="Comparison divider"
-          />
-          <span>{preview ? 'Preview' : VISION_LABELS[mode]}</span>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Breakdown({ record }: { record: PageRecord }) {
-  return (
-    <div className={styles.breakdown}>
-      <h3>
-        Score breakdown{' '}
-        <Link href="/methodology/" aria-label="Read scoring methodology">
-          <Info size={15} />
-        </Link>
-      </h3>
-      {[
-        ['Separation', record.analysis.separation],
-        ['Contrast', record.analysis.contrast],
-        ['Redundancy', record.analysis.redundancy],
-      ].map(([name, value]) => (
-        <div className={styles.metric} key={name}>
-          <span>{name}</span>
-          <div className={styles.bar}>
-            <div style={{ width: `${value ?? 0}%` }} />
-          </div>
-          <strong>
-            {value === null ? 'N/A' : Math.round(Number(value))}
-            <span>{value === null ? '' : ' / 100'}</span>
-          </strong>
-        </div>
-      ))}
-      <p className="note">{record.analysis.confidence} evidence · original page</p>
-    </div>
-  );
-}
-
 export default function Workspace() {
-  const session = useSession(),
-    { document: doc, records } = session;
-  const [pageIndex, setPageIndex] = useState(0),
-    [issueIndex, setIssueIndex] = useState(0),
-    [mode, setMode] = useState<Vision>('original'),
-    [compare, setCompare] = useState(false),
-    [preview, setPreview] = useState<CorrectionProposal | null>(null),
-    [measurement, setMeasurement] = useState<{ score: number | null; major: number } | null>(null),
-    [exporting, setExporting] = useState(''),
-    [exportError, setExportError] = useState(''),
-    [exportMode, setExportMode] = useState<Vision>('original'),
-    [inspectorOpen, setInspectorOpen] = useState(true);
-  const dialog = useRef<HTMLDialogElement>(null);
-  const record = records[Math.min(pageIndex, records.length - 1)],
-    issue = record?.analysis.issues[issueIndex];
+  const session = useSession();
+  const { document: doc, records, config } = session;
+
+  const [pageIndex, setPageIndex] = useState(0);
+  const [selectedCvd, setSelectedCvd] = useState<CvdType>('Deuteranopia');
+  const [selectedPair, setSelectedPair] = useState<PcciColorPair | null>(null);
+  const [selectedClusterId, setSelectedClusterId] = useState<number | null>(null);
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [simCache, setSimCache] = useState<SimulationCache | null>(null);
+  const [exporting, setExporting] = useState('');
+  const [exportError, setExportError] = useState('');
+  const autoAnalyzedDoc = useRef<LocalDocument | null>(null);
+
+  // Auto-analyze single-page images immediately upon entering /analyze/
   useEffect(() => {
-    setIssueIndex(0);
-    setPreview(null);
-    setMeasurement(null);
-  }, [pageIndex]);
+    if (
+      doc &&
+      doc.count === 1 &&
+      autoAnalyzedDoc.current !== doc &&
+      !records.length &&
+      !session.busy &&
+      !session.total
+    ) {
+      autoAnalyzedDoc.current = doc;
+      void session.analyzePages([1]);
+    }
+  }, [doc, records.length, session]);
+
+  const record = records[Math.min(pageIndex, Math.max(0, records.length - 1))];
+
+  // Reset selected pair/cluster when active page or CVD changes
+  useEffect(() => {
+    if (!record) {
+      setSelectedPair(null);
+      setSelectedClusterId(null);
+      return;
+    }
+    const topPair = record.analysis.cvd[selectedCvd].pairs[0] ?? null;
+    setSelectedPair(topPair);
+    setSelectedClusterId(null);
+  }, [record, selectedCvd]);
+
   useEffect(() => {
     setPageIndex(0);
-    setIssueIndex(0);
-    setPreview(null);
-    setMeasurement(null);
+    setSelectedCvd('Deuteranopia');
   }, [doc]);
-  if (!doc)
+
+  if (!doc) {
     return (
       <>
-        <SiteHeader />
+        <SiteHeader active="analyze" />
         <main id="main" className="emptyState">
           <FileText size={38} strokeWidth={1.4} />
-          <h1>Start with a textbook.</h1>
+          <h1>Start with an image or textbook.</h1>
           <p>
-            Choose a PDF or page image to explore its colors. Documents stay in memory, so a
-            refreshed tab starts a new session.
+            Choose a JPG, PNG, or PDF to compute independent Deuteranopia, Protanopia, and
+            Tritanopia PCCI scores locally in your browser.
           </p>
           <Link href="/" className="button primary">
-            Choose a textbook
+            Choose a file
             <ArrowRight size={18} />
           </Link>
         </main>
       </>
     );
-  if (!records.length && !session.busy && !session.total) return <Selection doc={doc} />;
-  const scored = records.filter((r) => r.analysis.score !== null),
-    average = scored.length
-      ? Math.round(scored.reduce((s, r) => s + r.analysis.score!, 0) / scored.length)
-      : null;
-  const hasApproved = records.some((r) => r.approved.length > 0);
-  async function report() {
+  }
+
+  if (doc.count > 1 && !records.length && !session.busy && !session.total) {
+    return <Selection doc={doc} />;
+  }
+
+  const allResults = records.map((r) => r.analysis);
+
+  async function runExport(label: string, fn: () => Promise<void> | void) {
     setExportError('');
-    setExporting('Preparing report');
+    setExporting(label);
     try {
-      const { exportReport } = await import('@/lib/exports');
-      await exportReport(doc!, records);
+      await fn();
     } catch (e) {
-      setExportError(e instanceof Error ? e.message : 'Report export failed.');
+      setExportError(e instanceof Error ? e.message : 'Export failed.');
     } finally {
       setExporting('');
     }
   }
-  async function exportPDF() {
-    dialog.current?.close();
-    setExportError('');
-    setExporting('Preparing document');
-    try {
-      const { exportDocument } = await import('@/lib/exports');
-      await exportDocument(doc!, records, exportMode, setExporting);
-    } catch (e) {
-      setExportError(e instanceof Error ? e.message : 'Document export failed.');
-    } finally {
-      setExporting('');
-    }
-  }
-  function showPreview(fix: CorrectionProposal) {
-    if (preview?.id === fix.id) return;
-    setMeasurement(null);
-    setPreview(fix);
-    setCompare(true);
-  }
-  const canApprove =
-    preview &&
-    measurement &&
-    record &&
-    measurement.score !== null &&
-    record.analysis.score !== null &&
-    measurement.score >= record.analysis.score + 5 &&
-    measurement.major === 0;
+
   return (
-    <div className={styles.workspace}>
+    <div className={styles.dashboard}>
       <header className={styles.appHeader}>
-        <div className={styles.brandCell}>
+        <div className={styles.headerLeft}>
           <Brand compact />
+          <div className={styles.docMeta}>
+            <FileText size={17} aria-hidden="true" />
+            <span className={styles.docName} title={doc.name}>
+              {doc.name}
+            </span>
+            <span className={styles.docBadge}>
+              {records.length} / {doc.count} {doc.count === 1 ? 'page' : 'pages'} analyzed
+            </span>
+          </div>
         </div>
-        <div className={styles.documentName}>
-          <FileText size={19} />
-          <span title={doc.name}>{doc.name}</span>
-        </div>
-        <div className={styles.overall}>
-          <span>{scored.length === doc.count ? 'Textbook score' : 'Selection average'}</span>
-          <Score small value={average} />
-          <Link href="/methodology/" aria-label="About this experimental score">
-            <Info size={15} />
-          </Link>
-        </div>
+
         <div className={styles.headerActions}>
+          <Link
+            href="/methodology/"
+            className="button subtle"
+            style={{ fontSize: 13 }}
+          >
+            <Info size={15} aria-hidden="true" />
+            Methodology
+          </Link>
           <Link
             className="button outline"
             href="/"
-            aria-label="New analysis"
             onClick={() => {
               if (session.busy) session.cancel();
             }}
           >
-            <Plus size={17} />
-            <span>New analysis</span>
+            <Plus size={15} aria-hidden="true" />
+            New analysis
           </Link>
           <button
+            type="button"
             className="button primary"
-            aria-label="Export report"
             disabled={!records.length || session.busy || !!exporting}
-            onClick={() => void report()}
+            onClick={() =>
+              void runExport('Preparing PDF report…', async () => {
+                const { exportPcciReportPdf } = await import('@/lib/exports');
+                await exportPcciReportPdf(doc, allResults);
+              })
+            }
           >
-            <Download size={17} />
-            <span>Export report</span>
+            <Download size={15} aria-hidden="true" />
+            Export PDF report
           </button>
         </div>
       </header>
-      {(session.busy || session.errors.length > 0 || exportError) && (
-        <div className={styles.progressArea}>
-          {session.busy && (
-            <div className={styles.progressRow}>
-              <LoaderCircle size={17} className={styles.spin} />
-              <span role="status">{session.status}</span>
+
+      <div className={styles.bodyLayout}>
+        {doc.count > 1 && records.length > 0 && (
+          <aside className={styles.pageRail} aria-label="Analyzed pages">
+            <div className={styles.pageRailHeader}>
+              <span>Analyzed pages</span>
               <span>
-                {session.completed} / {session.total}
+                {records.length} / {session.total || records.length}
               </span>
-              <button className="button" onClick={session.cancel}>
-                Cancel
-              </button>
-              <progress value={session.completed} max={session.total} />
             </div>
-          )}
-          {session.errors.map((e, i) => (
-            <p className="errorMessage" role="alert" key={i}>
-              {e}
-            </p>
-          ))}
-          {exportError && (
-            <p className="errorMessage" role="alert">
-              {exportError}
-            </p>
-          )}
-        </div>
-      )}
-      <div className={styles.body}>
-        <aside className={styles.rail} aria-label="Analyzed pages">
-          <h2>
-            Pages{' '}
-            <span>
-              {records.length} / {session.total}
-            </span>
-          </h2>
-          <div className={styles.thumbnails}>
-            {records.map((r, i) => (
-              <button
-                className={`${styles.railPage} ${i === pageIndex ? styles.activePage : ''}`}
-                key={r.analysis.pageNumber}
-                aria-label={`View page ${r.analysis.pageNumber}, score ${r.analysis.score ?? 'not available'}`}
-                aria-current={i === pageIndex ? 'page' : undefined}
-                onClick={() => setPageIndex(i)}
-              >
-                <span>{r.analysis.pageNumber}</span>
-                <div>
-                  <Thumb doc={doc} page={r.analysis.pageNumber} blob={r.thumbnail} />
-                </div>
-                <span className={styles.pageScore}>{r.analysis.score ?? '—'}</span>
-              </button>
+            <div className={styles.pageList}>
+              {records.map((r, idx) => (
+                <button
+                  key={r.pageNumber}
+                  type="button"
+                  className={`${styles.railItem} ${idx === pageIndex ? styles.railItemActive : ''}`}
+                  aria-current={idx === pageIndex ? 'page' : undefined}
+                  aria-label={`Inspect page ${r.pageNumber}`}
+                  onClick={() => setPageIndex(idx)}
+                >
+                  <div className={styles.railThumbWrap}>
+                    <div className={styles.railThumbBox}>
+                      <Thumb doc={doc} page={r.pageNumber} blob={r.thumbnail} />
+                    </div>
+                    <div className={styles.railScores}>
+                      <strong>Page {r.pageNumber}</strong>
+                      <span>D: {r.analysis.cvd.Deuteranopia.pcciScore.toFixed(1)}</span>
+                      <span>P: {r.analysis.cvd.Protanopia.pcciScore.toFixed(1)}</span>
+                      <span>T: {r.analysis.cvd.Tritanopia.pcciScore.toFixed(1)}</span>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+            <div className={styles.railFooter}>
+              <ShieldCheck size={15} aria-hidden="true" />
+              <span>Browser-local · private</span>
+            </div>
+          </aside>
+        )}
+
+        <main id="main" className={styles.mainScroll}>
+          {/* Progress / Status / Error banners */}
+          <div className={styles.bannerRow}>
+            {(session.busy || session.recalculating) && (
+              <div className={styles.progressBox}>
+                <LoaderCircle size={18} className={styles.spin} aria-hidden="true" />
+                <span role="status" style={{ fontSize: 13, fontWeight: 600 }}>
+                  {session.status || 'Analyzing…'}
+                </span>
+                {session.busy && (
+                  <>
+                    <span className="note">
+                      {session.completed} / {session.total}
+                    </span>
+                    <progress value={session.completed} max={Math.max(1, session.total)} />
+                    <button type="button" className="button" onClick={session.cancel}>
+                      Cancel
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+
+            {!session.busy && !session.recalculating && session.status && (
+              <span className="visuallyHidden" role="status">
+                {session.status}
+              </span>
+            )}
+
+            {session.errors.map((err, i) => (
+              <p key={i} className="errorMessage" role="alert" style={{ margin: 0 }}>
+                {err}
+              </p>
             ))}
+
+            {exportError && (
+              <p className="errorMessage" role="alert" style={{ margin: 0 }}>
+                {exportError}
+              </p>
+            )}
+
+            {exporting && (
+              <div className={styles.statusNotice} role="status">
+                <LoaderCircle size={16} className={styles.spin} />
+                <span>{exporting}</span>
+              </div>
+            )}
+
+            {record && !record.analysis.isDefaultConfig && (
+              <div className={styles.customBanner} role="status">
+                <div>
+                  <FlaskConical size={16} aria-hidden="true" />
+                  <span>
+                    <strong>Non-default experimental parameters active</strong> (K={config.k}, τ=
+                    {config.tau}, min ΔE₀₀={config.minOriginalDeltaE}, min freq=
+                    {(config.minClusterFrequency * 100).toFixed(2)}%, global=
+                    {Math.round(config.globalWeight * 100)}%, q=
+                    {Math.round(config.tailProportion * 100)}%, alpha={config.alphaCompositing}).
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  className="button"
+                  style={{ minHeight: 34, padding: '5px 11px', fontSize: 12 }}
+                  disabled={session.busy || session.recalculating}
+                  onClick={() => void session.updateConfig({ ...DEFAULT_PCCI_CONFIG })}
+                >
+                  <RotateCcw size={13} aria-hidden="true" />
+                  Reset defaults
+                </button>
+              </div>
+            )}
           </div>
-          <div className={styles.railBottom}>
-            <ShieldCheck size={17} />
-            <span>On your device</span>
-          </div>
-        </aside>
-        <main id="main" className={styles.center}>
+
           {!record ? (
-            <div className={styles.waiting}>
+            <div className={styles.waitingBox}>
               {session.busy ? (
                 <>
-                  <LoaderCircle size={34} className={styles.spin} />
-                  <h1>Taking a closer look.</h1>
-                  <p>Your first page will appear here as soon as it is ready.</p>
-                  <p className="note">
-                    English text recognition loads once. Complex pages take longer.
+                  <LoaderCircle size={32} className={styles.spin} />
+                  <h1>Running PCCI analysis locally.</h1>
+                  <p>
+                    Downsampling to 640 px (Lanczos-3), extracting CIELAB clusters via MiniBatch
+                    K-means, and evaluating Deuteranopia, Protanopia, and Tritanopia risk.
                   </p>
                 </>
               ) : (
                 <>
-                  <AlertTriangle size={34} />
+                  <AlertTriangle size={32} />
                   <h1>No pages completed.</h1>
-                  <p>Try a smaller file or a different page.</p>
-                  <button className="button primary" onClick={() => void session.setDocument(doc)}>
-                    Choose pages again
+                  <p>You can choose pages again or upload another image or PDF.</p>
+                  <button
+                    type="button"
+                    className="button primary"
+                    onClick={() => {
+                      autoAnalyzedDoc.current = null;
+                      void session.setDocument(doc);
+                    }}
+                  >
+                    {doc.count > 1 ? 'Choose pages again' : 'Retry analysis'}
                   </button>
                 </>
               )}
             </div>
           ) : (
             <>
-              <div className={styles.toolbar}>
-                <div
-                  className={styles.visionTabs}
-                  role="group"
-                  aria-label="Color vision simulation"
-                >
-                  {(Object.keys(VISION_LABELS) as Vision[]).map((v) => (
+              {/* Active page heading & metadata bar */}
+              <div className={styles.sectionTop}>
+                <div>
+                  <h1
+                    style={{
+                      margin: 0,
+                      fontFamily: 'Georgia, serif',
+                      fontSize: 26,
+                      letterSpacing: '-0.5px',
+                    }}
+                  >
+                    {doc.count > 1 ? `Page ${record.pageNumber}` : doc.name}
+                  </h1>
+                  <p className="note" style={{ margin: '4px 0 0' }}>
+                    Original: {record.analysis.originalDimensions.width} ×{' '}
+                    {record.analysis.originalDimensions.height} px · Computational:{' '}
+                    {record.analysis.computationalDimensions.width} ×{' '}
+                    {record.analysis.computationalDimensions.height} px ·{' '}
+                    {record.analysis.clusterCount} clusters · {record.analysis.eligiblePairCount}{' '}
+                    eligible pairs · {record.analysis.processingTimeMs.toFixed(0)} ms ·{' '}
+                    {record.analysis.algorithmVersion}
+                  </p>
+                </div>
+
+                {doc.count > 1 && records.length > 1 && (
+                  <div className={styles.zoomGroup} aria-label="Analyzed page navigation">
                     <button
-                      key={v}
-                      aria-pressed={mode === v}
-                      className={mode === v ? styles.activeTab : ''}
-                      onClick={() => {
-                        if (mode === v) return;
-                        setMeasurement(null);
-                        setMode(v);
-                      }}
+                      type="button"
+                      aria-label="Previous analyzed page"
+                      disabled={pageIndex === 0}
+                      onClick={() => setPageIndex((i) => Math.max(0, i - 1))}
                     >
-                      <Eye size={16} />
-                      {VISION_LABELS[v]}
+                      <ChevronLeft size={16} />
                     </button>
-                  ))}
-                </div>
-                <div className={styles.pageNav}>
-                  <button
-                    aria-label="Previous analyzed page"
-                    disabled={!pageIndex}
-                    onClick={() => setPageIndex((i) => i - 1)}
-                  >
-                    <ChevronLeft size={17} />
-                  </button>
-                  <span>
-                    {record.analysis.pageNumber} / {doc.count}
-                  </span>
-                  <button
-                    aria-label="Next analyzed page"
-                    disabled={pageIndex >= records.length - 1}
-                    onClick={() => setPageIndex((i) => i + 1)}
-                  >
-                    <ChevronRight size={17} />
-                  </button>
-                </div>
+                    <span style={{ minWidth: 72 }}>
+                      Page {record.pageNumber} / {doc.count}
+                    </span>
+                    <button
+                      type="button"
+                      aria-label="Next analyzed page"
+                      disabled={pageIndex >= records.length - 1}
+                      onClick={() => setPageIndex((i) => Math.min(records.length - 1, i + 1))}
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                )}
               </div>
-              <Viewer
-                doc={doc}
-                record={record}
-                mode={mode}
-                issue={issue}
-                preview={preview}
-                compare={compare}
-                onMeasurement={(score, major) => setMeasurement({ score, major })}
+
+              {record.analysis.status === 'no-eligible-pairs' && (
+                <div className={styles.statusNotice} role="status">
+                  <Info size={17} aria-hidden="true" style={{ flexShrink: 0, marginTop: 2 }} />
+                  <span>{record.analysis.statusMessage}</span>
+                </div>
+              )}
+
+              {/* 1. Three independent PCCI risk score cards (Section 7.B) */}
+              <RiskScoreCards
+                result={record.analysis}
+                selectedCvd={selectedCvd}
+                onSelectCvd={setSelectedCvd}
               />
-              <div className={styles.viewerFooter}>
-                <label className={styles.toggle}>
-                  <input
-                    type="checkbox"
-                    checked={compare}
-                    onChange={(e) => setCompare(e.target.checked)}
-                  />
-                  <span />
-                  Compare view
-                </label>
-                <span className={styles.simulationNote}>Simulations are approximations</span>
-              </div>
+
+              {/* 2. CVD Simulation Viewer + Risk Localization Overlay (Section 7.C & 7.F) */}
+              <SimulationViewer
+                doc={doc}
+                result={record.analysis}
+                labels={record.labels}
+                compWidth={record.compWidth}
+                compHeight={record.compHeight}
+                selectedCvd={selectedCvd}
+                onSelectCvd={setSelectedCvd}
+                selectedPair={selectedPair}
+                selectedClusterId={selectedClusterId}
+                showOverlay={showOverlay}
+                onShowOverlayChange={setShowOverlay}
+                onSimCacheReady={setSimCache}
+              />
+
+              {/* 3. Explainable colour-pair analysis: "Why this score?" (Section 7.D) */}
+              <WhyThisScore
+                result={record.analysis}
+                selectedCvd={selectedCvd}
+                selectedPair={selectedPair}
+                onSelectPair={(pair) => {
+                  setSelectedClusterId(null);
+                  setSelectedPair(pair);
+                  setShowOverlay(true);
+                }}
+              />
+
+              {/* 4. Extracted CIELAB palette explorer (Section 7.E) */}
+              <PaletteExplorer
+                result={record.analysis}
+                selectedCvd={selectedCvd}
+                selectedClusterId={selectedClusterId}
+                onSelectCluster={(id) => {
+                  setSelectedClusterId(id);
+                  if (id !== null) setShowOverlay(true);
+                }}
+              />
+
+              {/* 5. Multi-page PDF summary & sortable table (Section 7.G) */}
+              <PdfSummaryTable
+                records={records}
+                totalDocPages={doc.count}
+                activePageIndex={pageIndex}
+                onSelectPageIndex={(idx) => setPageIndex(idx)}
+              />
+
+              {/* 6. Experimental Research Mode (Section 7.I) */}
+              <ResearchParamsPanel
+                config={config}
+                busy={session.busy || session.recalculating}
+                onApply={(next) => session.updateConfig(next)}
+              />
+
+              {/* 7. Export controls (Section 11) */}
+              <section className={styles.panel} aria-labelledby="exports-heading">
+                <div className={styles.panelHeader}>
+                  <h2 id="exports-heading">
+                    <Download size={18} aria-hidden="true" />
+                    Export Analysis Results
+                  </h2>
+                  <span className="note">
+                    All exports include algorithm version ({record.analysis.algorithmVersion}),
+                    parameters, and research disclaimers.
+                  </span>
+                </div>
+                <div className={styles.panelBody}>
+                  <div className={styles.exportGrid}>
+                    <button
+                      type="button"
+                      className="button"
+                      disabled={!!exporting}
+                      onClick={() =>
+                        void runExport('Exporting scores CSV…', async () => {
+                          const { exportScoresCsv } = await import('@/lib/exports');
+                          exportScoresCsv(allResults, doc.name);
+                        })
+                      }
+                    >
+                      <FileSpreadsheet size={15} aria-hidden="true" />
+                      Scores CSV
+                    </button>
+
+                    <button
+                      type="button"
+                      className="button"
+                      disabled={!!exporting}
+                      onClick={() =>
+                        void runExport('Exporting colour-pair evidence CSV…', async () => {
+                          const { exportPairEvidenceCsv } = await import('@/lib/exports');
+                          exportPairEvidenceCsv(allResults, doc.name);
+                        })
+                      }
+                    >
+                      <FileSpreadsheet size={15} aria-hidden="true" />
+                      Colour-pair evidence CSV
+                    </button>
+
+                    <button
+                      type="button"
+                      className="button"
+                      disabled={!!exporting}
+                      onClick={() =>
+                        void runExport('Exporting complete JSON…', async () => {
+                          const { exportResultsJson } = await import('@/lib/exports');
+                          exportResultsJson(allResults, doc.name);
+                        })
+                      }
+                    >
+                      <FileCode2 size={15} aria-hidden="true" />
+                      Complete JSON
+                    </button>
+
+                    <button
+                      type="button"
+                      className="button"
+                      disabled={!!exporting || !simCache}
+                      onClick={() =>
+                        void runExport('Rendering 4-image comparison PNG…', async () => {
+                          if (!simCache) return;
+                          const { exportFourUpComparisonPng } = await import('@/lib/exports');
+                          await exportFourUpComparisonPng(
+                            simCache.originalCanvas,
+                            simCache.simulations,
+                            simCache.width,
+                            simCache.height,
+                            record.analysis,
+                            doc.name,
+                          );
+                        })
+                      }
+                    >
+                      <FileImage size={15} aria-hidden="true" />
+                      4-image comparison PNG
+                    </button>
+
+                    <button
+                      type="button"
+                      className="button"
+                      disabled={!!exporting}
+                      onClick={() =>
+                        void runExport('Preparing PDF report…', async () => {
+                          const { exportPcciReportPdf } = await import('@/lib/exports');
+                          await exportPcciReportPdf(doc, allResults);
+                        })
+                      }
+                    >
+                      <FileText size={15} aria-hidden="true" />
+                      PDF report
+                    </button>
+
+                    <button
+                      type="button"
+                      className="button"
+                      disabled={!!exporting}
+                      onClick={() =>
+                        void runExport(`Rendering ${selectedCvd} simulated PDF…`, async () => {
+                          const { exportSimulatedPdf } = await import('@/lib/exports');
+                          await exportSimulatedPdf(
+                            doc,
+                            records.map((r) => r.pageNumber),
+                            selectedCvd,
+                            setExporting,
+                          );
+                        })
+                      }
+                    >
+                      <Download size={15} aria-hidden="true" />
+                      Simulated PDF ({selectedCvd})
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              {/* 8. Required Research Disclaimers (Section 12) */}
+              <section className={styles.disclaimerBox} aria-label="Research disclaimers">
+                <h3>Research Disclaimers &amp; Scope</h3>
+                <ul>
+                  {RESEARCH_DISCLAIMERS.map((d) => (
+                    <li key={d}>{d}</li>
+                  ))}
+                </ul>
+              </section>
             </>
           )}
         </main>
-        {record && (
-          <aside className={styles.inspector} aria-label="Page issue inspector">
-            <button
-              className={styles.inspectorToggle}
-              onClick={() => setInspectorOpen((v) => !v)}
-              aria-expanded={inspectorOpen}
-            >
-              <span>Inspector</span>
-              <ChevronDown size={17} />
-            </button>
-            <div className={inspectorOpen ? styles.inspectorContent : styles.inspectorClosed}>
-              <div className={styles.pageSummary}>
-                <div>
-                  <span>Page {record.analysis.pageNumber} · original score</span>
-                  <strong>{band(record.analysis.score)}</strong>
-                </div>
-                <Score small value={record.analysis.score} />
-              </div>
-              <h2 className={styles.issueHeading}>
-                {record.analysis.issues.length} potential{' '}
-                {record.analysis.issues.length === 1 ? 'issue' : 'issues'}{' '}
-                <AlertTriangle size={19} />
-              </h2>
-              <div className={styles.issueList}>
-                {record.analysis.issues.map((item, i) => (
-                  <button
-                    key={item.id}
-                    className={`${styles.issueRow} ${i === issueIndex ? styles.activeIssue : ''}`}
-                    onClick={() => {
-                      setIssueIndex(i);
-                      setPreview(null);
-                      if (preview) setMeasurement(null);
-                    }}
-                    aria-pressed={i === issueIndex}
-                  >
-                    <span className={styles.issueNumber}>{i + 1}</span>
-                    <span>
-                      {item.title}
-                      <small>
-                        <AlertTriangle size={12} />
-                        {item.severity}
-                      </small>
-                    </span>
-                  </button>
-                ))}
-              </div>
-              {!issue && (
-                <p className="note">
-                  No issues were detected by these checks. Review the page yourself: a high score
-                  does not guarantee accessibility.
-                </p>
-              )}
-              {issue && (
-                <div className={styles.issueDetail}>
-                  <div className={styles.issueCounter}>
-                    <span>
-                      Issue {issueIndex + 1} of {record.analysis.issues.length}
-                    </span>
-                    <div>
-                      <button
-                        aria-label="Previous issue"
-                        disabled={!issueIndex}
-                        onClick={() => {
-                          setIssueIndex((i) => i - 1);
-                          setPreview(null);
-                        }}
-                      >
-                        <ChevronLeft size={15} />
-                      </button>
-                      <button
-                        aria-label="Next issue"
-                        disabled={issueIndex >= record.analysis.issues.length - 1}
-                        onClick={() => {
-                          setIssueIndex((i) => i + 1);
-                          setPreview(null);
-                        }}
-                      >
-                        <ChevronRight size={15} />
-                      </button>
-                    </div>
-                  </div>
-                  <h3>Why it’s a problem</h3>
-                  <p>{issue.description}</p>
-                  {issue.metrics.length > 0 && (
-                    <details className={styles.evidence}>
-                      <summary>Measured evidence</summary>
-                      <p>Original ΔE: {issue.normalDeltaE.toFixed(1)}</p>
-                      {issue.metrics.map((m) => (
-                        <p key={m.mode}>
-                          {VISION_LABELS[m.mode]}: ΔE {m.deltaE.toFixed(1)} ·{' '}
-                          {(m.retention * 100).toFixed(0)}% retained
-                        </p>
-                      ))}
-                      <div className={styles.swatches}>
-                        {issue.regionIds.map((id) => (
-                          <span key={id}>
-                            <i style={{ background: hex(record.analysis.regions[id].color) }} />
-                            {hex(record.analysis.regions[id].color)}
-                          </span>
-                        ))}
-                      </div>
-                    </details>
-                  )}
-                  <h3>Recommendation</h3>
-                  {issue.suggestions.length ? (
-                    issue.suggestions.map((fix) => (
-                      <div key={fix.id} className={styles.suggestion}>
-                        <div className={styles.suggestionCopy}>
-                          <Layers size={28} strokeWidth={1.3} />
-                          <div>
-                            <h4>{fix.label}</h4>
-                            <p>{fix.description}</p>
-                            <span className={styles.gain}>
-                              Individually tested: +{fix.gain} points
-                            </span>
-                          </div>
-                        </div>
-                        <button
-                          className="button primary"
-                          disabled={
-                            session.busy || record.approved.some((item) => item.id === fix.id)
-                          }
-                          onClick={() => showPreview(fix)}
-                        >
-                          <Eye size={17} />
-                          {record.approved.some((item) => item.id === fix.id)
-                            ? 'Change approved'
-                            : 'Preview fix'}
-                        </button>
-                      </div>
-                    ))
-                  ) : (
-                    <div className={styles.manualSuggestion}>
-                      <Scan size={25} />
-                      <div>
-                        <strong>Review the original artwork</strong>
-                        <p>
-                          {issue.kind === 'text'
-                            ? 'Increase text/background contrast in the source document. Automatic text editing is unavailable.'
-                            : 'Add explicit labels, outlines, or different line patterns in the source artwork. No safe automatic change met the improvement threshold.'}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                  {preview && (
-                    <div className={styles.previewApproval}>
-                      <strong>Review this change</strong>
-                      <p>
-                        {measurement
-                          ? `Measured preview score: ${measurement.score ?? 'N/A'} / 100`
-                          : 'Rechecking the combined changes…'}
-                      </p>
-                      {measurement && !canApprove && (
-                        <p className="note">
-                          This combination does not meet the improvement and regression checks. Try
-                          another change.
-                        </p>
-                      )}
-                      <div>
-                        <button
-                          className="button primary"
-                          disabled={!canApprove}
-                          onClick={() => {
-                            session.approve(record.analysis.pageNumber, preview);
-                            setPreview(null);
-                          }}
-                        >
-                          Approve change
-                        </button>
-                        <button
-                          className="button"
-                          onClick={() => {
-                            setPreview(null);
-                            setMeasurement(null);
-                          }}
-                        >
-                          Discard
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-              {record.approved.length > 0 && (
-                <div className={styles.approved}>
-                  <h3>
-                    <CheckCircle2 size={16} />
-                    Approved changes
-                  </h3>
-                  {record.approved.map((f) => (
-                    <div key={f.id}>
-                      <span>{f.label}</span>
-                      <button
-                        aria-label={`Revert ${f.label}`}
-                        onClick={() => {
-                          session.revert(record.analysis.pageNumber, f.id);
-                          setPreview(null);
-                          setMeasurement(null);
-                        }}
-                      >
-                        <RotateCcw size={15} />
-                      </button>
-                    </div>
-                  ))}
-                  {measurement && !preview && (
-                    <p className="note">Corrected score: {measurement.score ?? 'N/A'} / 100</p>
-                  )}
-                </div>
-              )}
-              <button
-                className="button outline"
-                disabled={!hasApproved || session.busy || !!exporting}
-                onClick={() => {
-                  setExportMode('original');
-                  dialog.current?.showModal();
-                }}
-              >
-                <Download size={17} />
-                Download corrected PDF
-              </button>
-              <button
-                className="textLink"
-                disabled={session.busy || !!exporting}
-                onClick={() => {
-                  setExportMode(mode === 'original' ? 'deutan' : mode);
-                  dialog.current?.showModal();
-                }}
-              >
-                Download simulated PDF
-                <ArrowRight size={15} />
-              </button>
-              <Breakdown record={record} />
-              <details className={styles.limitations}>
-                <summary>Analysis notes & limitations</summary>
-                {record.analysis.warnings.map((w) => (
-                  <p key={w}>{w}</p>
-                ))}
-                <p>
-                  {record.analysis.version} · {(record.analysis.duration / 1000).toFixed(1)} seconds
-                  of visual analysis
-                </p>
-              </details>
-              <div className={styles.methodology}>
-                <span>Methodology</span>
-                <Link href="/methodology/">
-                  How this score is calculated <ArrowRight size={14} />
-                </Link>
-              </div>
-            </div>
-          </aside>
-        )}
       </div>
-      <footer className={styles.statusBar}>
-        <CheckCircle2 size={19} />
-        <span role="status">{exporting || session.status}</span>
-        <span className={styles.sessionNote}>Session clears on refresh</span>
-      </footer>
-      <dialog ref={dialog} className={styles.exportDialog}>
-        <div className={styles.dialogHeading}>
-          <h2>
-            {exportMode === 'original'
-              ? 'Export your corrected textbook'
-              : 'Export a color vision simulation'}
-          </h2>
-          <button
-            className="button subtle"
-            aria-label="Close export dialog"
-            onClick={() => dialog.current?.close()}
-          >
-            <X size={20} />
-          </button>
-        </div>
-        <p>
-          {exportMode === 'original'
-            ? 'Pages with approved changes become images. Other PDF pages are copied from your original.'
-            : 'Only analyzed pages are simulated. Other PDF pages are copied from your original.'}
-        </p>
-        <p className="note">
-          Transformed pages lose selectable text and document tags. Keep your original for reading
-          and assistive technology. This download is a visual review copy.
-        </p>
-        {exportMode !== 'original' && (
-          <label className={styles.exportSelect}>
-            Simulation
-            <select value={exportMode} onChange={(e) => setExportMode(e.target.value as Vision)}>
-              <option value="protan">Protanopia</option>
-              <option value="deutan">Deuteranopia</option>
-              <option value="tritan">Tritanopia</option>
-            </select>
-          </label>
-        )}
-        <div className={styles.dialogActions}>
-          <button className="button" onClick={() => dialog.current?.close()}>
-            Cancel
-          </button>
-          <button className="button primary" onClick={() => void exportPDF()}>
-            <Download size={17} />
-            Download PDF
-          </button>
-        </div>
-      </dialog>
     </div>
   );
 }

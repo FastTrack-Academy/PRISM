@@ -43,8 +43,8 @@ test('identity, contrast limits, and simulation endpoints', () => {
   }
   assert.equal(band(null), 'Not enough evidence');
 });
-test('severity-100 simulation matches Colorspacious 1.1.2 golden outputs within one rounding unit', () => {
-  // Generated with the notebooks' cspace_convert(rgb, sRGB1+CVD, sRGB1), clipped then uint8.
+test('severity-100 Machado (protan/deutan) and Brettel (tritan) simulation match reference outputs', () => {
+  // Protan/Deutan: Machado (2009) severity 100; Tritan: Brettel (1997) two-plane projection from prism_stage1.py.
   const colors = [
     [191, 73, 64],
     [109, 131, 62],
@@ -62,7 +62,7 @@ test('severity-100 simulation matches Colorspacious 1.1.2 golden outputs within 
       [0, 93, 183],
       [156, 137, 2],
       [0, 0, 0],
-      [255, 254, 254],
+      [255, 255, 255],
       [151, 136, 62],
       [79, 127, 208],
     ],
@@ -72,25 +72,28 @@ test('severity-100 simulation matches Colorspacious 1.1.2 golden outputs within 
       [0, 79, 178],
       [181, 161, 28],
       [0, 0, 0],
-      [254, 254, 255],
+      [255, 255, 255],
       [138, 127, 75],
       [53, 113, 203],
     ],
     tritan: [
-      [209, 47, 71],
-      [113, 125, 115],
-      [0, 105, 121],
-      [252, 101, 107],
+      [192, 69, 89],
+      [118, 124, 127],
+      [0, 97, 123],
+      [235, 115, 132],
       [0, 0, 0],
-      [254, 254, 254],
-      [0, 146, 131],
-      [0, 139, 152],
+      [255, 255, 255],
+      [79, 140, 160],
+      [0, 131, 159],
     ],
   };
   for (const mode of ['protan', 'deutan', 'tritan'] as const)
     colors.forEach((color, i) =>
       simulateColor(color, mode).forEach((value, j) =>
-        assert.ok(Math.abs(value - golden[mode][i][j]) <= 1),
+        assert.ok(
+          Math.abs(value - golden[mode][i][j]) <= 1,
+          `${mode} color ${i} ch ${j}: got ${value}, expected ${golden[mode][i][j]}`,
+        ),
       ),
     );
 });

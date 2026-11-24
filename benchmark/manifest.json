@@ -1,0 +1,422 @@
+{
+  "version": "0.1.0",
+  "created": "2026-11-02",
+  "items": [
+    {
+      "id": "ishihara-01",
+      "category": "ishihara",
+      "file": "images/ishihara-01.png",
+      "sha256": "41f3d1d14f52339a4f8f1ec9a1e1f01b8785d5a37cb9367a7bf5207845ce5436",
+      "width": 1000,
+      "height": 1000,
+      "expected_label": "good",
+      "label_basis": "plate_answer",
+      "task": "Read the numeral",
+      "answer_key": "12",
+      "cvd_modes": [
+        "protan",
+        "deutan"
+      ],
+      "pair_id": null,
+      "source_page": "https://commons.wikimedia.org/wiki/File:Ishihara_1.svg",
+      "license": "Public domain",
+      "creator": "Shinobu Ishihara",
+      "note": "Plate stress case; digital reproduction is not a diagnostic test."
+    },
+    {
+      "id": "ishihara-09",
+      "category": "ishihara",
+      "file": "images/ishihara-09.png",
+      "sha256": "31032436101057695e30c16719e8c4da61a35b177ff45df7d6578a18b6045bae",
+      "width": 1000,
+      "height": 1000,
+      "expected_label": "bad",
+      "label_basis": "plate_answer",
+      "task": "Read the numeral",
+      "answer_key": "74 normally; often 21 with red-green CVD",
+      "cvd_modes": [
+        "protan",
+        "deutan"
+      ],
+      "pair_id": null,
+      "source_page": "https://commons.wikimedia.org/wiki/File:Ishihara_9.svg",
+      "license": "Public domain",
+      "creator": "Shinobu Ishihara",
+      "note": "Plate stress case; digital reproduction is not a diagnostic test."
+    },
+    {
+      "id": "ishihara-11",
+      "category": "ishihara",
+      "file": "images/ishihara-11.png",
+      "sha256": "f65bd1d2d05d40269253f89093f9fa2665c057a5cb18450bd15d7c58cd1a6082",
+      "width": 1000,
+      "height": 1000,
+      "expected_label": "bad",
+      "label_basis": "plate_answer",
+      "task": "Read the numeral",
+      "answer_key": "6 normally; may be unreadable with red-green CVD",
+      "cvd_modes": [
+        "protan",
+        "deutan"
+      ],
+      "pair_id": null,
+      "source_page": "https://commons.wikimedia.org/wiki/File:Ishihara_11.PNG",
+      "license": "Public domain",
+      "creator": "Shinobu Ishihara",
+      "note": "Plate stress case; digital reproduction is not a diagnostic test."
+    },
+    {
+      "id": "ishihara-19",
+      "category": "ishihara",
+      "file": "images/ishihara-19.png",
+      "sha256": "2971d0e7312678920bc30acb3ce1cea9cce764c9db16fb3ea23b704563cb3182",
+      "width": 1000,
+      "height": 1000,
+      "expected_label": "bad",
+      "label_basis": "plate_answer",
+      "task": "Report whether a numeral is present",
+      "answer_key": "No numeral normally; 2 may appear with red-green CVD",
+      "cvd_modes": [
+        "protan",
+        "deutan"
+      ],
+      "pair_id": null,
+      "source_page": "https://commons.wikimedia.org/wiki/File:Ishihara_19.PNG",
+      "license": "Public domain",
+      "creator": "Shinobu Ishihara",
+      "note": "Plate stress case; digital reproduction is not a diagnostic test."
+    },
+    {
+      "id": "nature-leaf-color-only",
+      "category": "nature",
+      "file": "images/nature-leaf-color-only.png",
+      "sha256": "8e2d31ce59545af6f0fdb55a0d0c01a143dbafc61b488164621c32c45b87bf61",
+      "width": 1000,
+      "height": 1120,
+      "expected_label": "bad",
+      "label_basis": "design_intent",
+      "task": "Locate a red leaf cluster",
+      "answer_key": "Find one cluster using color alone",
+      "cvd_modes": [
+        "protan",
+        "deutan"
+      ],
+      "pair_id": "nature-leaf",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Red_and_Green_(55619730005).jpg",
+      "license": "Public domain",
+      "creator": "ShenandoahNPS",
+      "note": "Described variant adds a circle and a textual location cue. Provisional label requires CVD review."
+    },
+    {
+      "id": "nature-leaf-described",
+      "category": "nature",
+      "file": "images/nature-leaf-described.png",
+      "sha256": "5e89d1ea3f095e354b9957cbb5c3272858b3b46ce15ff62bce9d4f1eafd069a0",
+      "width": 1000,
+      "height": 1120,
+      "expected_label": "good",
+      "label_basis": "design_intent",
+      "task": "Locate a red leaf cluster",
+      "answer_key": "One cluster is circled and described",
+      "cvd_modes": [
+        "protan",
+        "deutan"
+      ],
+      "pair_id": "nature-leaf",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Red_and_Green_(55619730005).jpg",
+      "license": "Public domain",
+      "creator": "ShenandoahNPS",
+      "note": "Described variant adds a circle and a textual location cue. Provisional label requires CVD review."
+    },
+    {
+      "id": "nature-sumac-color-only",
+      "category": "nature",
+      "file": "images/nature-sumac-color-only.png",
+      "sha256": "69c9a31beb43419c747be39578e4f83ff18562ba3e261eaac89897bd3eda6571",
+      "width": 1000,
+      "height": 1120,
+      "expected_label": "bad",
+      "label_basis": "design_intent",
+      "task": "Locate one purple berry cluster",
+      "answer_key": "Find one cluster using color alone",
+      "cvd_modes": [
+        "protan",
+        "deutan"
+      ],
+      "pair_id": "nature-sumac",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Sumac_and_Beauty_Berry_(172b20e9-1dfb-47f8-89d1-ee9174131b8b).JPG",
+      "license": "Public domain",
+      "creator": "NPS",
+      "note": "Described variant adds a circle and a textual location cue. Provisional label requires CVD review."
+    },
+    {
+      "id": "nature-sumac-described",
+      "category": "nature",
+      "file": "images/nature-sumac-described.png",
+      "sha256": "ff9145ee11e55df0c8af3c6c3eddcbd924df6daafcdd71322d9b549a55c0a279",
+      "width": 1000,
+      "height": 1120,
+      "expected_label": "good",
+      "label_basis": "design_intent",
+      "task": "Locate one purple berry cluster",
+      "answer_key": "One cluster is circled and described",
+      "cvd_modes": [
+        "protan",
+        "deutan"
+      ],
+      "pair_id": "nature-sumac",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Sumac_and_Beauty_Berry_(172b20e9-1dfb-47f8-89d1-ee9174131b8b).JPG",
+      "license": "Public domain",
+      "creator": "NPS",
+      "note": "Described variant adds a circle and a textual location cue. Provisional label requires CVD review."
+    },
+    {
+      "id": "textbook-transport-bad",
+      "category": "textbook",
+      "file": "images/textbook-transport-bad.png",
+      "sha256": "58885a345fe04baf9c43c7bc02c98dc3f2aa11fc396e96df8f6556779e2855e5",
+      "width": 1000,
+      "height": 980,
+      "expected_label": "bad",
+      "label_basis": "design_intent",
+      "task": "Which path carries sodium into the cell?",
+      "answer_key": "Sodium path enters the cell",
+      "cvd_modes": [
+        "protan",
+        "deutan"
+      ],
+      "pair_id": "textbook-transport",
+      "source_page": null,
+      "license": "PRISM original",
+      "creator": "PRISM",
+      "note": "Controlled pair; same task and content, with explicit non-color cues added in good variant."
+    },
+    {
+      "id": "textbook-transport-good",
+      "category": "textbook",
+      "file": "images/textbook-transport-good.png",
+      "sha256": "c7dab7184e38ecb1dfd19e3a986c8d5467dead8e69055c85b4f32cd21950be96",
+      "width": 1000,
+      "height": 980,
+      "expected_label": "good",
+      "label_basis": "design_intent",
+      "task": "Which path carries sodium into the cell?",
+      "answer_key": "Sodium path enters the cell",
+      "cvd_modes": [
+        "protan",
+        "deutan"
+      ],
+      "pair_id": "textbook-transport",
+      "source_page": null,
+      "license": "PRISM original",
+      "creator": "PRISM",
+      "note": "Controlled pair; same task and content, with explicit non-color cues added in good variant."
+    },
+    {
+      "id": "textbook-map-bad",
+      "category": "textbook",
+      "file": "images/textbook-map-bad.png",
+      "sha256": "92cb92bf220548cccb0cb07efdf7a8b146a298751b72e3d3c67f1b547150d48e",
+      "width": 1000,
+      "height": 980,
+      "expected_label": "bad",
+      "label_basis": "design_intent",
+      "task": "Which regions are protected wetlands?",
+      "answer_key": "Red map regions are wetlands",
+      "cvd_modes": [
+        "protan",
+        "deutan"
+      ],
+      "pair_id": "textbook-map",
+      "source_page": null,
+      "license": "PRISM original",
+      "creator": "PRISM",
+      "note": "Controlled pair; same task and content, with explicit non-color cues added in good variant."
+    },
+    {
+      "id": "textbook-map-good",
+      "category": "textbook",
+      "file": "images/textbook-map-good.png",
+      "sha256": "7e71be2e3943c709aed5652cf1ca421e47c0fa081e944d72cc34eed048013b53",
+      "width": 1000,
+      "height": 980,
+      "expected_label": "good",
+      "label_basis": "design_intent",
+      "task": "Which regions are protected wetlands?",
+      "answer_key": "Red map regions are wetlands",
+      "cvd_modes": [
+        "protan",
+        "deutan"
+      ],
+      "pair_id": "textbook-map",
+      "source_page": null,
+      "license": "PRISM original",
+      "creator": "PRISM",
+      "note": "Controlled pair; same task and content, with explicit non-color cues added in good variant."
+    },
+    {
+      "id": "science-chart-bad",
+      "category": "scientific_poster",
+      "file": "images/science-chart-bad.png",
+      "sha256": "14002db2e291ce02c001d4e3c42288f4ce06b5a2bbf1e3f778b8221526bb26bc",
+      "width": 1000,
+      "height": 1120,
+      "expected_label": "bad",
+      "label_basis": "design_intent",
+      "task": "Which habitat has 64 species in year 6?",
+      "answer_key": "Forest",
+      "cvd_modes": [
+        "protan",
+        "deutan"
+      ],
+      "pair_id": "science-chart",
+      "source_page": null,
+      "license": "PRISM original",
+      "creator": "PRISM",
+      "note": "Controlled pair; same task and content, with explicit non-color cues added in good variant."
+    },
+    {
+      "id": "science-chart-good",
+      "category": "scientific_poster",
+      "file": "images/science-chart-good.png",
+      "sha256": "973e05c05e7ac09ce9aad6137461b47cf6a0fc3e68eff5e457f41b561b00e5ba",
+      "width": 1000,
+      "height": 1120,
+      "expected_label": "good",
+      "label_basis": "design_intent",
+      "task": "Which habitat has 64 species in year 6?",
+      "answer_key": "Forest",
+      "cvd_modes": [
+        "protan",
+        "deutan"
+      ],
+      "pair_id": "science-chart",
+      "source_page": null,
+      "license": "PRISM original",
+      "creator": "PRISM",
+      "note": "Controlled pair; same task and content, with explicit non-color cues added in good variant."
+    },
+    {
+      "id": "science-cells-bad",
+      "category": "scientific_poster",
+      "file": "images/science-cells-bad.png",
+      "sha256": "53909a5760a8e5cd7066200b7683f18751f09fcd73543f015a39f28596bbef56",
+      "width": 1000,
+      "height": 1120,
+      "expected_label": "bad",
+      "label_basis": "design_intent",
+      "task": "List the numbered cells that show both A and B.",
+      "answer_key": "1, 3, 4, 7, 9, 12, 13, 15",
+      "cvd_modes": [
+        "tritan"
+      ],
+      "pair_id": "science-cells",
+      "source_page": null,
+      "license": "PRISM original",
+      "creator": "PRISM",
+      "note": "Controlled pair; same task and content, with explicit non-color cues added in good variant."
+    },
+    {
+      "id": "science-cells-good",
+      "category": "scientific_poster",
+      "file": "images/science-cells-good.png",
+      "sha256": "e6ae88320b429fb8a12ec4ec20cfa9a3e49c65c239c31421a79090d692a9627b",
+      "width": 1000,
+      "height": 1120,
+      "expected_label": "good",
+      "label_basis": "design_intent",
+      "task": "List the numbered cells that show both A and B.",
+      "answer_key": "1, 3, 4, 7, 9, 12, 13, 15",
+      "cvd_modes": [
+        "tritan"
+      ],
+      "pair_id": "science-cells",
+      "source_page": null,
+      "license": "PRISM original",
+      "creator": "PRISM",
+      "note": "Controlled pair; same task and content, with explicit non-color cues added in good variant."
+    },
+    {
+      "id": "humanities-timeline-bad",
+      "category": "humanities_poster",
+      "file": "images/humanities-timeline-bad.png",
+      "sha256": "1011adf42885867cda3b23b43555613153c14b7c103f1eeba9321ca256cf0206",
+      "width": 1000,
+      "height": 1120,
+      "expected_label": "bad",
+      "label_basis": "design_intent",
+      "task": "Which milestones describe arrivals?",
+      "answer_key": "1905, 1952, 2008",
+      "cvd_modes": [
+        "protan",
+        "deutan"
+      ],
+      "pair_id": "humanities-timeline",
+      "source_page": null,
+      "license": "PRISM original",
+      "creator": "PRISM",
+      "note": "Controlled pair; same task and content, with explicit non-color cues added in good variant."
+    },
+    {
+      "id": "humanities-timeline-good",
+      "category": "humanities_poster",
+      "file": "images/humanities-timeline-good.png",
+      "sha256": "ae63646427feac4d0e5c245027d2fe67e2f0bd228c2317ec186ef7f6e0ad87f5",
+      "width": 1000,
+      "height": 1120,
+      "expected_label": "good",
+      "label_basis": "design_intent",
+      "task": "Which milestones describe arrivals?",
+      "answer_key": "1905, 1952, 2008",
+      "cvd_modes": [
+        "protan",
+        "deutan"
+      ],
+      "pair_id": "humanities-timeline",
+      "source_page": null,
+      "license": "PRISM original",
+      "creator": "PRISM",
+      "note": "Controlled pair; same task and content, with explicit non-color cues added in good variant."
+    },
+    {
+      "id": "humanities-map-bad",
+      "category": "humanities_poster",
+      "file": "images/humanities-map-bad.png",
+      "sha256": "2772bad49833e91a8f3bae82fde50f5ffdc29eebe88abd308d13adfc6ad0b364",
+      "width": 1000,
+      "height": 1120,
+      "expected_label": "bad",
+      "label_basis": "design_intent",
+      "task": "Which route leads to oral history?",
+      "answer_key": "Solid route to oral history gallery",
+      "cvd_modes": [
+        "tritan"
+      ],
+      "pair_id": "humanities-map",
+      "source_page": null,
+      "license": "PRISM original",
+      "creator": "PRISM",
+      "note": "Controlled pair; same task and content, with explicit non-color cues added in good variant."
+    },
+    {
+      "id": "humanities-map-good",
+      "category": "humanities_poster",
+      "file": "images/humanities-map-good.png",
+      "sha256": "c796d629e5d4720b8e1d07676e6c8a3afe3f6fdb92157ad2d8e98b63b0918559",
+      "width": 1000,
+      "height": 1120,
+      "expected_label": "good",
+      "label_basis": "design_intent",
+      "task": "Which route leads to oral history?",
+      "answer_key": "Solid route to oral history gallery",
+      "cvd_modes": [
+        "tritan"
+      ],
+      "pair_id": "humanities-map",
+      "source_page": null,
+      "license": "PRISM original",
+      "creator": "PRISM",
+      "note": "Controlled pair; same task and content, with explicit non-color cues added in good variant."
+    }
+  ]
+}

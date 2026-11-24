@@ -1,0 +1,28 @@
+Generated using the built-in image generation tool. This is an illustrative proposed workflow.
+
+Use case: infographic-diagram. Create a beautiful high-resolution landscape 4:3 product workflow poster for PRISM, a high school color vision accessibility research app. Editorial Dribbble-style layout, warm white background, navy typography, blue accents, crisp miniature application screens, generous spacing, thin connectors, subtle soft shadows. Communicate a proposed workflow with concrete chart examples. No fake numerical accuracy, no medical certification, no claims of implementation.
+
+Header exact text "PRISM" and "From color warnings to contextual review".
+Subtitle exact text "Proposed application workflow • All image processing in the browser".
+
+Use a six-panel serpentine layout, 3 columns and 2 rows. Top row left-to-right stages 01,02,03. Bottom row right-to-left stages 04,05,06. Draw clear arrows 01→02→03, 03 down to04, 04 left to05,05 left to06. Keep all text highly readable, no tiny paragraphs.
+
+Use the same simple example chart throughout: red solid ascending line with round markers A, green dashed ascending line with square markers B, separated vertically, a detached legend "A  Forest" and "B  Meadow". Preserve dashed gaps. Text or symbol identity always supplements colors.
+
+01 top-left "Upload + choose task". Show an elegant mini app upload panel containing a textbook page thumbnail and selected chart rectangle. Below a task input containing "Which series is Forest?" and a small control labelled "CVD profile". Caption "Choose the page, task and viewing size."
+
+02 top-middle "Find candidate pairs". Show extracted chart fragments with a bracket joining green dashes to one object B, and the red curve object A. Highlight A/B as a proposed comparison. Small evidence labels "Color separation", "Contrast", "Structure". Caption "Rules propose concerns; small details survive."
+
+03 top-right "Build an evidence card". Show a well-organized mini comparison card with the full original chart and its complete legend, and a smaller clearly labelled "Simulated view" where both curves have similar brown tones but retain different styles and markers. Include an OCR text strip reading "A: Forest   B: Meadow". Caption "Keep the pair, legend and task together."
+
+04 bottom-right "SmolVLM rubric review". Show the evidence card entering a small blue block labelled "SmolVLM". To its left or beneath, three readable question rows: "Must A and B be distinguished?", "Which alternative cue exists?", "Does the cue match the legend?". A little outlined chip "Unknown is allowed". Caption "Short questions. Referenced evidence."
+
+05 bottom-middle "Validate + apply rules". Show a checklist with "Valid object IDs", "Cue evidence verified", "Uncertainty retained". Below, a compact grade key with exact labels "0  Lower concern", "1  Partial mitigation", "2  Probable barrier", "U  Unresolved". Emphasize it is a fixed rubric; use neutral text icons rather than reliance on red/green colors. Caption "Code assigns the grade from validated evidence."
+
+06 bottom-left "Review + export". Show a polished mini app result pane, heading "Example review". One selected pair result reads "A ↔ B: lower concern" and explanation "Distinct line styles match the legend." Beneath put a separate summary label "Example page summary" then "5 of 12 pairs examined" and three small rows "2 probable barriers", "1 lower concern", "2 unresolved". Final line "7 pairs not examined". Include small plain buttons "Inspect evidence" and "Export report". Caption "Show the result and how much was checked."
+
+Footer exact text "Fixed rubric • Limited model calls • Reproducible evidence".
+Small readable footnote "Illustrative workflow. Grades require validation against human task performance."
+
+Be meticulous with correct spelling, count consistency and chart consistency. The result is a visually engaging, information-rich science fair app workflow poster, not just abstract boxes.
+

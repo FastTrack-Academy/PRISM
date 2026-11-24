@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { SiteHeader } from '@/components/brand';
+
 export const metadata = { title: 'About — PRISM' };
+
 export default function About() {
   return (
     <>
@@ -13,43 +15,67 @@ export default function About() {
         </h1>
         <p className="lede">
           PRISM stands for Perceptual Recoloring for Inclusive School Materials. It helps educators
-          investigate how textbook colors can make learning easier—or harder.
+          and researchers investigate potential colour-confusion risks in educational images and
+          textbook pages for individuals with Colour Vision Deficiency (CVD).
         </p>
-        <h2>A research project, made approachable</h2>
+
+        <h2>Scientific architecture</h2>
         <p>
-          Created by Ella, PRISM began with Python experiments exploring pixels, color clustering,
-          vision simulation, and spatial regions. This website brings those ideas into an
-          interactive workspace for teachers, students, and science-fair reviewers.
-        </p>
-        <p>
-          The current system combines unsupervised color clustering, English text recognition, and
-          explicit color-science measurements. It does not understand a diagram’s scientific
-          meaning. Its findings are starting points for review.
-        </p>
-        <h2>Your textbook stays with you</h2>
-        <p>
-          Your file is processed in your browser. There are no accounts, document uploads to a
-          server, analytics, or stored document history. PDF and OCR processing resources load from
-          this website; your textbook content is never sent with those requests.
+          Created by Ella, PRISM evolved from Python colour-science experiments into an interactive,
+          reproducible browser application implementing the{' '}
+          <strong>Perceptual Color Confusion Index (PCCI)</strong>.
         </p>
         <p>
-          Files and results exist only in this tab’s memory. Download your report or corrected copy
-          before closing or refreshing the tab.
+          PRISM distinguishes two dimensions of educational accessibility: (1){' '}
+          <em>perceptual colour confusion</em>—whether originally distinct colours collapse under
+          simulated dichromacy—and (2) <em>contextual information accessibility</em>—whether labels,
+          symbols, shapes, patterns, and legends compensate for colour confusion. The current
+          application focuses strictly on an explainable, reproducible implementation of the first
+          dimension, generating independent 0–100 PCCI risk scores for Deuteranopia, Protanopia,
+          and Tritanopia.
         </p>
-        <h2>Designed for a thoughtful first step</h2>
+
+        <h2>Privacy-first, browser-local processing</h2>
         <p>
-          Analyze up to 10 pages at a time from one PDF, JPG, or PNG under 100 MB. Diagrams, charts,
-          and maps are useful starting points. Photographs, tiny details, complex scanned layouts,
-          and non-English text are more difficult to assess reliably.
+          Every step—PDF rendering, Lanczos-3 downsampling, CIELAB MiniBatch K-means clustering,
+          Machado &amp; Brettel CVD simulation, CIEDE2000 scoring, and CSV/JSON/PNG/PDF export—runs
+          locally inside your browser using Web Workers. No account, external AI API, server
+          upload, or analytics tracking is required.
         </p>
         <p>
-          Color vision varies among individuals and viewing conditions. A simulation cannot
-          reproduce exactly what another person sees. Involving people with color vision
-          deficiencies in evaluation is essential to developing the research further.
+          Files and analysis results remain strictly in tab memory. Download your CSV, JSON, PNG,
+          or PDF exports before closing or refreshing the tab.
         </p>
-        <Link href="/methodology/" className="button outline">
-          Read the scoring methodology
-        </Link>
+
+        <h2>Research scope &amp; future work</h2>
+        <p>
+          PRISM provides experimental estimates, not clinical diagnoses or accessibility
+          certifications. A high PCCI score does not establish that a diagram is inaccessible if
+          alternative visual cues convey the same information, and a low PCCI score does not
+          guarantee accessibility. Future research will explore human calibration studies with
+          individuals who have CVD as well as multimodal contextual assessment of labels, legends,
+          and patterns.
+        </p>
+
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 20 }}>
+          <Link href="/methodology/" className="button primary">
+            Read the PCCI methodology
+          </Link>
+          <Link href="/" className="button outline">
+            Analyze an image or PDF
+          </Link>
+        </div>
+
+        <details style={{ marginTop: 34, fontSize: 13, color: 'var(--muted)' }}>
+          <summary style={{ cursor: 'pointer', fontWeight: 600 }}>
+            Archived / experimental prototypes (separate from PCCI)
+          </summary>
+          <p style={{ marginTop: 10 }}>
+            An earlier figure-crop prototype remains available at{' '}
+            <Link href="/figure/">/figure/</Link> for historical comparison. It is separate from the
+            PCCI scoring engine and does not influence PCCI results.
+          </p>
+        </details>
       </main>
     </>
   );

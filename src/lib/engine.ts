@@ -242,6 +242,7 @@ export function evaluate(
     riskyWeight = 0,
     contrastSum = 0,
     contrastWeight = 0;
+  let examinedColorPairs = 0;
   for (const e of edges) {
     const a = regions[e.a],
       b = regions[e.b];
@@ -249,6 +250,7 @@ export function evaluate(
     // Ignore already-indistinguishable shades and neutral/neutral boundaries for CVD risk.
     const chroma = (c: RGB) => Math.hypot(...lab(c).slice(1));
     if (pair.normal < 3 || Math.max(chroma(a.color), chroma(b.color)) < 12) continue;
+    examinedColorPairs++;
     const weight = e.boundary * Math.sqrt(Math.min(a.area, b.area));
     const outlineFraction = e.cue / e.boundary;
     const hasOutline = outlineFraction >= 0.4;
@@ -353,6 +355,7 @@ export function evaluate(
     height: r.height,
     score,
     separation,
+    examinedColorPairs,
     contrast,
     redundancy,
     confidence: textCount ? 'Exploratory' : 'Limited',

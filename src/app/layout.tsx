@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import { SessionProvider } from '@/components/session';
 import './globals.css';
 export const metadata: Metadata = {
-  title: 'PRISM — See every page more clearly',
+  title: 'PRISM — Perceptual Color Confusion Index (PCCI)',
   description:
-    'Private, on-device color accessibility analysis for textbooks. Compare color vision simulations, inspect confusing regions, and preview thoughtful corrections.',
+    'Browser-local Perceptual Color Confusion Index (PCCI) analysis for educational images and textbook PDFs across Deuteranopia, Protanopia, and Tritanopia.',
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -1,0 +1,16 @@
+image,profile,probes,original_clear,newly_weak,median_margin
+ishihara-01,protan,12,11,0,21.07
+ishihara-01,deutan,12,11,0,27.28
+ishihara-01,tritan,12,11,0,62.92
+ishihara-09,protan,12,9,2,10.21
+ishihara-09,deutan,12,9,2,9.16
+ishihara-09,tritan,12,9,0,53.54
+ishihara-11,protan,12,11,11,-1.77
+ishihara-11,deutan,12,11,8,2.72
+ishihara-11,tritan,12,11,0,34.66
+nature-leaf-color-only,protan,12,10,7,2.97
+nature-leaf-color-only,deutan,12,10,10,-1.78
+nature-leaf-color-only,tritan,12,10,0,16.75
+nature-sumac-color-only,protan,12,12,0,37.95
+nature-sumac-color-only,deutan,12,12,0,29.13
+nature-sumac-color-only,tritan,12,12,1,29.63

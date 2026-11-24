@@ -1,0 +1,41 @@
+Generated with the built-in image generation tool. Illustrative proposed workflow.
+
+Create a polished, highly legible landscape 4:3 educational infographic poster for PRISM, a proposed browser-based color vision accessibility research app. Use case: infographic-diagram. Match premium Dribbble product design/editorial style: white and very pale blue surfaces, navy text, restrained cobalt accents, softly rounded application cards, subtle shadows, crisp miniature diagrams, generous spacing. Text and diagrams must be large enough to read. No decorative mascots, no code, no fake performance numbers.
+
+Header: bold "PRISM" followed by title "Context first. Details next."
+Subtitle exactly: "Map the page → measure local evidence → review meaning"
+Small header tag: "Proposed browser workflow"
+
+Layout six large panels in a clear 3-column, 2-row serpentine flow: TOP ROW 01,02,03 left to right; BOTTOM ROW 04 on right,05 in middle,06 on left. Clear arrows 01→02→03,03 down to04,04 left to05,05 left to06. Numbers make reading direction unmistakable. Use meaningful examples at every stage.
+
+COHERENT SOURCE PAGE throughout: an educational page "Ecosystems" containing TWO small charts (Chart 1 and Chart 2), one shared detached legend labelled "Shared legend", one real-looking small photo of red and green leaves, and a short text paragraph. Each chart has a solid rust-red curve with circle markers labelled A and a dashed olive-green curve with square markers labelled B. The shared legend reads "A  Forest" with a solid rust line and "B  Meadow" with a dashed olive line. Blue outlines represent layout selection and are not part of the measured image. Maintain dashed gaps throughout.
+
+01 top-left heading "Map the page".
+Show a mini full page with clean labelled region boxes around "Chart 1", "Chart 2", "Photo", "Text" and "Shared legend". The chart regions must be spatially distinct; the leaf photo is separate from charts. Small pencil/crop icon with readable tag "Confirm boundaries".
+Caption exact "Separate layout regions before comparing colors."
+
+02 top-middle heading "Keep context connected".
+Show Chart 1 and Chart 2 as separate miniature panels with dashed blue association arrows to ONE shared legend card beneath them, clearly readable "A  Forest" and "B  Meadow". Add a small caption rectangle labelled "Caption / task" linked to chart context. The photo is not part of this bundle. This is the key insight: separate regions may share meaning, so do not cut the legend away.
+Caption exact "Link charts to captions, legends and related panels."
+
+03 top-right heading "Measure local details".
+Show a larger crop of Chart 1 with its solid rust line and dashed olive line. Include a zoom loupe/inset illustrating several separated dashes enclosed by a light bracket marked "One curve". Three small labelled evidence badges below "Color separation", "Contrast", "Style + structure".
+Caption exact "Keep source detail, dash gaps and viewing scale."
+
+04 bottom-right heading "Build candidate pairs".
+Show a card titled "A ↔ B" containing the two curves and three checkable proposal reasons, exact text "Color risk", "Legend link", "Uncertain structure". Also show a smaller side-by-side Original and CVD illustrated view of the chart, the CVD view recoloring both lines to similar muted brown while preserving line styles. Label second view "Illustrative simulation".
+Caption exact "Include linked and uncertain cases, not only color flags."
+
+05 bottom-middle heading "Review uncertain meaning".
+Show the chart crop PLUS readable legend entering a simple dark blue module labelled "SmolVLM". Below show two clear question rows "Must A and B be distinguished?" and "Does the line style match the legend?" A separate narrow block after the model reads "Verify evidence • Apply fixed rules". Small chip "Unknown is allowed".
+Caption exact "Use targeted model review where context is unresolved."
+
+06 bottom-left heading "Return to the page".
+Show the original multi-region page with two numbered issue pins on chart regions. Next to it show a mini result list with three status rows and distinct icons: "Probable barrier", "Verified alternative cue", "Needs review". At bottom a prominent strip says "Show reviewed and unreviewed regions". Use words and symbols rather than color alone for statuses.
+Caption exact "Report local evidence and incomplete coverage."
+
+Bottom footer strip: "Analyze locally • Preserve cross-panel links • Validate with human tasks"
+Small footnote exact: "Illustrative proposal. Region boundaries and model answers can be wrong."
+
+Design constraints: visually show that layout blocks are different from fine color fragments; show shared legend links clearly; do not imply that separate charts can never be compared. Do not include a universal page score or invented measurements. All readable text should be correctly spelled, concise and aligned. The photo should make this more concrete and visually appealing, while charts and evidence cards occupy the majority of the poster. All six panels should feel like a coherent application workflow rather than unrelated illustrations.
+
