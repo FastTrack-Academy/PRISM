@@ -10,10 +10,10 @@ import {
 import styles from './dashboard.module.css';
 
 function BandIcon({ level }: { level: RiskBand['level'] }) {
-  if (level === 'low') return <ShieldCheck size={14} aria-hidden="true" />;
-  if (level === 'moderate') return <Info size={14} aria-hidden="true" />;
-  if (level === 'elevated') return <AlertTriangle size={14} aria-hidden="true" />;
-  return <AlertOctagon size={14} aria-hidden="true" />;
+  if (level === 'low') return <ShieldCheck size={12} aria-hidden="true" />;
+  if (level === 'moderate') return <Info size={12} aria-hidden="true" />;
+  if (level === 'elevated') return <AlertTriangle size={12} aria-hidden="true" />;
+  return <AlertOctagon size={12} aria-hidden="true" />;
 }
 
 const BAR_CLASS: Record<RiskBand['level'], string> = {
@@ -40,14 +40,24 @@ export function RiskScoreCards({
   onSelectCvd: (cvd: CvdType) => void;
 }) {
   return (
-    <section className={styles.cardsSection} aria-labelledby="pcci-scores-heading">
-      <div className={styles.sectionTop}>
-        <h2 id="pcci-scores-heading">Perceptual Color Confusion Index (PCCI)</h2>
-        <p className={styles.sectionHint}>
-          Three independent 0–100 risk scores (higher = greater estimated confusion risk). Risk bands
-          are experimental research defaults, not clinically calibrated thresholds.
+    <section className={styles.cvdStrip} aria-labelledby="pcci-scores-heading">
+      <div className={styles.cvdStripHead}>
+        <h1 id="pcci-scores-heading">
+          Perceptual Color Confusion Index (PCCI)
+          <span className="note" style={{ fontWeight: 400 }}>
+            · {result.clusterCount} clusters
+            {result.kSelection
+              ? ` (${result.kSelection.mode === 'elbow' ? 'Auto Elbow' : 'Auto Silhouette'})`
+              : ''}{' '}
+            · {result.eligiblePairCount} eligible pairs · {result.processingTimeMs.toFixed(0)} ms
+          </span>
+        </h1>
+        <p className={styles.cvdStripHint}>
+          Click a CVD card to switch both the simulation and its confusing colour pairs below (0–100,
+          higher = greater risk; bands are experimental defaults).
         </p>
       </div>
+
       <div className={styles.scoreGrid} role="group" aria-label="Independent CVD risk scores">
         {CVD_TYPES.map((cvdType) => {
           const data = result.cvd[cvdType];
@@ -63,14 +73,26 @@ export function RiskScoreCards({
               aria-pressed={active}
               onClick={() => onSelectCvd(cvdType)}
             >
-              <div className={styles.scoreCardHead}>
+              <div className={styles.scoreCardTop}>
                 <span className={styles.scoreCardTitle}>{cvdType}</span>
-                {active && <span className={styles.activePill}>Inspecting</span>}
+                {active ? (
+                  <span className={styles.activePill}>Viewing</span>
+                ) : (
+                  <span className="note" style={{ fontSize: 11 }}>
+                    Click to inspect
+                  </span>
+                )}
               </div>
 
-              <div className={styles.scoreNumberRow}>
-                <strong className={styles.scoreBig}>{data.pcciScore.toFixed(1)}</strong>
-                <span className={styles.scoreDenom}>/ 100</span>
+              <div className={styles.scoreMetricLine}>
+                <div className={styles.scoreNumberRow}>
+                  <strong className={styles.scoreBig}>{data.pcciScore.toFixed(1)}</strong>
+                  <span className={styles.scoreDenom}>/ 100</span>
+                </div>
+                <span className={`${styles.bandBadge} ${BADGE_CLASS[band.level]}`}>
+                  <BandIcon level={band.level} />
+                  {band.label}
+                </span>
               </div>
 
               <div
@@ -87,23 +109,13 @@ export function RiskScoreCards({
                 />
               </div>
 
-              <div className={styles.bandRow}>
-                <span className={`${styles.bandBadge} ${BADGE_CLASS[band.level]}`}>
-                  <BandIcon level={band.level} />
-                  {band.label}
+              <div className={styles.cardMicroStats}>
+                <span>
+                  Mean risk: <strong>{data.meanRisk.toFixed(1)}</strong>
                 </span>
-                <span className={styles.bandRange}>Default band: {band.range}</span>
-              </div>
-
-              <div className={styles.cardSubStats}>
-                <div>
-                  <span>Weighted mean risk</span>
-                  <strong>{data.meanRisk.toFixed(1)} / 100</strong>
-                </div>
-                <div>
-                  <span>High-risk pair-weight share</span>
-                  <strong>{data.highRiskPairWeightShare.toFixed(1)}%</strong>
-                </div>
+                <span>
+                  High-risk pair weight: <strong>{data.highRiskPairWeightShare.toFixed(1)}%</strong>
+                </span>
               </div>
             </button>
           );

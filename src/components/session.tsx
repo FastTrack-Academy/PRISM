@@ -44,6 +44,7 @@ export const useSession = () => {
 
 function requiresReclustering(a: PcciConfig, b: PcciConfig): boolean {
   return (
+    a.kSelectionMode !== b.kSelectionMode ||
     a.k !== b.k ||
     a.maxEdge !== b.maxEdge ||
     a.maxSamples !== b.maxSamples ||

@@ -12,10 +12,27 @@ export const PCCI_ALGORITHM_VERSION = 'PCCI-1.0.0-stage1';
 
 export type AlphaCompositingMode = 'black' | 'white';
 
+export type KSelectionMode = 'fixed' | 'elbow' | 'silhouette';
+
+export type KSelectionCandidate = {
+  k: number;
+  inertia: number;
+  silhouette: number;
+};
+
+export type KSelectionDiagnostics = {
+  mode: KSelectionMode;
+  selectedK: number;
+  candidates: KSelectionCandidate[];
+  rationale: string;
+};
+
 export type PcciConfig = {
   /** Maximum edge length for computational downsampling (default 640). */
   maxEdge: number;
-  /** Maximum number of representative Lab colour clusters K (default 24). */
+  /** How K is chosen: 'fixed' (reference K=24), 'elbow' (Kneedle SSE), or 'silhouette'. */
+  kSelectionMode: KSelectionMode;
+  /** Maximum / fixed number of representative Lab colour clusters K (default 24). */
   k: number;
   /** Maximum sampled pixels for MiniBatch K-means fitting (default 50000). */
   maxSamples: number;
@@ -43,6 +60,7 @@ export type PcciConfig = {
 
 export const DEFAULT_PCCI_CONFIG: PcciConfig = {
   maxEdge: 640,
+  kSelectionMode: 'fixed',
   k: 24,
   maxSamples: 50000,
   seed: 42,
@@ -144,6 +162,7 @@ export type PcciAnalysisResult = {
   status: AnalysisStatus;
   statusMessage: string;
   clusterCount: number;
+  kSelection?: KSelectionDiagnostics;
   eligiblePairCount: number;
   clusters: PcciCluster[];
   cvd: Record<CvdType, CvdAnalysisResult>;
@@ -155,6 +174,7 @@ export type PcciIntermediateFeatures = {
   originalDimensions: { width: number; height: number };
   computationalDimensions: { width: number; height: number };
   k: number;
+  kSelection?: KSelectionDiagnostics;
   clusters: PcciCluster[];
   /** Per-pixel cluster ID of length compWidth * compHeight. */
   labels: Int32Array;
@@ -235,6 +255,7 @@ export const RESEARCH_DISCLAIMERS: readonly string[] = [
 export function isDefaultPcciConfig(config: PcciConfig): boolean {
   return (
     config.maxEdge === DEFAULT_PCCI_CONFIG.maxEdge &&
+    config.kSelectionMode === DEFAULT_PCCI_CONFIG.kSelectionMode &&
     config.k === DEFAULT_PCCI_CONFIG.k &&
     config.maxSamples === DEFAULT_PCCI_CONFIG.maxSamples &&
     config.seed === DEFAULT_PCCI_CONFIG.seed &&

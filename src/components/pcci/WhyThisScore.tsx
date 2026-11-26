@@ -1,6 +1,6 @@
 'use client';
 import { useMemo, useState } from 'react';
-import { HelpCircle, Layers } from 'lucide-react';
+import { ArrowRight, Layers } from 'lucide-react';
 import type { CvdType, PcciAnalysisResult, PcciColorPair } from '@/lib/pcci';
 import styles from './dashboard.module.css';
 
@@ -36,184 +36,139 @@ export function WhyThisScore({
     return list;
   }, [cvdData.pairs, sortBy]);
 
-  const visiblePairs = showAll ? sortedPairs : sortedPairs.slice(0, 12);
+  const visiblePairs = showAll ? sortedPairs : sortedPairs.slice(0, 15);
 
   return (
-    <section className={styles.panel} aria-labelledby="why-score-heading">
-      <div className={styles.panelHeader}>
-        <div>
-          <h2 id="why-score-heading">
-            <HelpCircle size={18} aria-hidden="true" />
-            Why this score? — {selectedCvd}
-          </h2>
-          <p className={styles.sectionHint} style={{ marginTop: 4 }}>
-            Image-level PCCI (<strong>{cvdData.pcciScore.toFixed(1)} / 100</strong>) is the weighted
-            mean pairwise risk across the top{' '}
-            <strong>{(result.config.tailProportion * 100).toFixed(0)}%</strong> of cumulative
-            eligible pair weight—distinct from any single pair’s individual risk score.
-          </p>
-        </div>
-
-        <div className={styles.segmented} role="group" aria-label="Sort colour pairs">
+    <>
+      <div className={styles.inspectorSubHeader}>
+        <h2 id="why-score-heading">Why this score? · {selectedCvd}</h2>
+        <div className={styles.sortPills} role="group" aria-label="Sort colour pairs">
           <button
             type="button"
             aria-pressed={sortBy === 'pairwiseRisk'}
             onClick={() => setSortBy('pairwiseRisk')}
           >
-            Pairwise risk
+            Risk
           </button>
           <button
             type="button"
             aria-pressed={sortBy === 'combinedWeight'}
             onClick={() => setSortBy('combinedWeight')}
           >
-            Combined weight
+            Weight
           </button>
           <button
             type="button"
             aria-pressed={sortBy === 'weightedContribution'}
             onClick={() => setSortBy('weightedContribution')}
           >
-            Weighted contribution
+            Impact
           </button>
         </div>
       </div>
 
-      <div className={styles.panelBody}>
-        {sortedPairs.length === 0 ? (
-          <div className={styles.statusNotice}>
-            <span>
-              No eligible colour pairs met the thresholds (original ΔE₀₀ ≥{' '}
-              {result.config.minOriginalDeltaE}, each cluster ≥{' '}
-              {(result.config.minClusterFrequency * 100).toFixed(2)}% of image pixels). Zero
-              detected risk here does not prove educational accessibility.
-            </span>
-          </div>
-        ) : (
-          <>
-            <div className={styles.tableWrap}>
-              <table className={styles.pairTable}>
-                <thead>
-                  <tr>
-                    <th>Original pair</th>
-                    <th>Simulated ({selectedCvd})</th>
-                    <th>Original ΔE₀₀</th>
-                    <th>Remaining ΔE₀₀</th>
-                    <th>Lost (%)</th>
-                    <th>Pairwise risk</th>
-                    <th>Combined weight</th>
-                    <th>Locate</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {visiblePairs.map((pair) => {
-                    const isSelected =
-                      selectedPair?.clusterA === pair.clusterA &&
-                      selectedPair?.clusterB === pair.clusterB;
-                    return (
-                      <tr
-                        key={`${pair.clusterA}-${pair.clusterB}`}
-                        className={`${styles.pairRowClickable} ${isSelected ? styles.pairRowActive : ''}`}
-                        onClick={() => onSelectPair(pair)}
-                      >
-                        <td>
-                          <div className={styles.swatchPair}>
-                            <span className={styles.swatchBlock}>
-                              <span
-                                className={styles.swatchSquare}
-                                style={{ backgroundColor: pair.originalHexA }}
-                                aria-hidden="true"
-                              />
-                              {pair.originalHexA}
-                            </span>
-                            <span className="note">vs</span>
-                            <span className={styles.swatchBlock}>
-                              <span
-                                className={styles.swatchSquare}
-                                style={{ backgroundColor: pair.originalHexB }}
-                                aria-hidden="true"
-                              />
-                              {pair.originalHexB}
-                            </span>
-                          </div>
-                        </td>
-                        <td>
-                          <div className={styles.swatchPair}>
-                            <span className={styles.swatchBlock}>
-                              <span
-                                className={styles.swatchSquare}
-                                style={{ backgroundColor: pair.simulatedHexA }}
-                                aria-hidden="true"
-                              />
-                              {pair.simulatedHexA}
-                            </span>
-                            <span className="note">vs</span>
-                            <span className={styles.swatchBlock}>
-                              <span
-                                className={styles.swatchSquare}
-                                style={{ backgroundColor: pair.simulatedHexB }}
-                                aria-hidden="true"
-                              />
-                              {pair.simulatedHexB}
-                            </span>
-                          </div>
-                        </td>
-                        <td>{pair.originalDeltaE.toFixed(2)}</td>
-                        <td>{pair.simulatedDeltaE.toFixed(2)}</td>
-                        <td>{(pair.relativeLoss * 100).toFixed(1)}%</td>
-                        <td>
-                          <strong>{(pair.pairwiseRisk * 100).toFixed(1)}</strong>
-                          {pair.tailIncludedWeight > 0 && (
-                            <span className={styles.tailTag}>Top {(result.config.tailProportion * 100).toFixed(0)}%</span>
-                          )}
-                        </td>
-                        <td
-                          title={`Global weight: ${(pair.globalWeight * 100).toFixed(2)}% · Local spatial weight: ${(pair.localWeight * 100).toFixed(2)}%`}
-                        >
-                          {(pair.combinedWeight * 100).toFixed(2)}%
-                          <div className="note" style={{ fontSize: 10 }}>
-                            G {(pair.globalWeight * 100).toFixed(1)}% · L{' '}
-                            {(pair.localWeight * 100).toFixed(1)}%
-                          </div>
-                        </td>
-                        <td>
-                          <button
-                            type="button"
-                            className="button"
-                            style={{ minHeight: 30, padding: '4px 9px', fontSize: 11 }}
-                            aria-pressed={isSelected}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onSelectPair(pair);
-                            }}
-                          >
-                            <Layers size={13} aria-hidden="true" />
-                            {isSelected ? 'Selected' : 'Inspect'}
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+      <p className="note" style={{ margin: 0, fontSize: 11.5 }}>
+        Image PCCI (<strong>{cvdData.pcciScore.toFixed(1)}</strong>) averages pairwise risk across
+        the top <strong>{(result.config.tailProportion * 100).toFixed(0)}%</strong> of cumulative
+        eligible pair weight. Click any pair below to highlight it live on the image.
+      </p>
 
-            {sortedPairs.length > 12 && (
-              <div style={{ marginTop: 12 }}>
-                <button
-                  type="button"
-                  className="textLink"
-                  onClick={() => setShowAll((v) => !v)}
-                >
-                  {showAll
-                    ? 'Show top 12 pairs'
-                    : `Show all ${sortedPairs.length} eligible colour pairs`}
-                </button>
-              </div>
-            )}
-          </>
-        )}
-      </div>
-    </section>
+      {sortedPairs.length === 0 ? (
+        <div className={styles.statusNotice}>
+          <span>
+            No eligible pairs met ΔE₀₀ ≥ {result.config.minOriginalDeltaE} and area ≥{' '}
+            {(result.config.minClusterFrequency * 100).toFixed(2)}%. Zero detected risk does not
+            prove accessibility.
+          </span>
+        </div>
+      ) : (
+        <div className={styles.pairCardList}>
+          {visiblePairs.map((pair) => {
+            const isSelected =
+              selectedPair?.clusterA === pair.clusterA &&
+              selectedPair?.clusterB === pair.clusterB;
+            return (
+              <button
+                key={`${pair.clusterA}-${pair.clusterB}`}
+                type="button"
+                className={`${styles.pairCard} ${isSelected ? styles.pairCardActive : ''}`}
+                aria-pressed={isSelected}
+                onClick={() => onSelectPair(pair)}
+              >
+                <div className={styles.pairCardTop}>
+                  <div className={styles.pairTransform}>
+                    <span className={styles.swatchDuo} title="Original colour pair">
+                      <span style={{ backgroundColor: pair.originalHexA }} />
+                      <span style={{ backgroundColor: pair.originalHexB }} />
+                    </span>
+                    <ArrowRight size={13} color="var(--muted)" aria-hidden="true" />
+                    <span className={styles.swatchDuo} title={`${selectedCvd} simulated pair`}>
+                      <span style={{ backgroundColor: pair.simulatedHexA }} />
+                      <span style={{ backgroundColor: pair.simulatedHexB }} />
+                    </span>
+                  </div>
+
+                  <div className={styles.pairRiskBadge}>
+                    <span>{(pair.pairwiseRisk * 100).toFixed(1)}</span>
+                    {pair.tailIncludedWeight > 0 && (
+                      <span className={styles.tailTag}>
+                        Top {(result.config.tailProportion * 100).toFixed(0)}%
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className={styles.pairHexLine}>
+                  <span>
+                    {pair.originalHexA} / {pair.originalHexB}
+                  </span>
+                  <span>
+                    → {pair.simulatedHexA} / {pair.simulatedHexB}
+                  </span>
+                </div>
+
+                <div className={styles.pairMetricChips}>
+                  <span>
+                    ΔE₀₀ <strong>{pair.originalDeltaE.toFixed(2)}</strong> →{' '}
+                    <strong>{pair.simulatedDeltaE.toFixed(2)}</strong> (
+                    {(pair.relativeLoss * 100).toFixed(0)}% lost)
+                  </span>
+                  <span
+                    title={`Global ${(pair.globalWeight * 100).toFixed(1)}% · Local ${(pair.localWeight * 100).toFixed(1)}%`}
+                  >
+                    Wt <strong>{(pair.combinedWeight * 100).toFixed(1)}%</strong>
+                  </span>
+                  {isSelected && (
+                    <span
+                      style={{
+                        color: 'var(--blue)',
+                        fontWeight: 700,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 3,
+                      }}
+                    >
+                      <Layers size={11} aria-hidden="true" />
+                      On image
+                    </span>
+                  )}
+                </div>
+              </button>
+            );
+          })}
+
+          {sortedPairs.length > 15 && (
+            <button
+              type="button"
+              className="textLink"
+              style={{ fontSize: 12, padding: '4px 0', minHeight: 32 }}
+              onClick={() => setShowAll((v) => !v)}
+            >
+              {showAll ? 'Show top 15 pairs' : `Show all ${sortedPairs.length} eligible pairs`}
+            </button>
+          )}
+        </div>
+      )}
+    </>
   );
 }

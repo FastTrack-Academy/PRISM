@@ -108,24 +108,27 @@ svg {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 11px;
+  gap: 10px;
   color: var(--ink);
   flex-shrink: 0;
 }
-.brand svg {
-  color: var(--blue);
+.brandLogo {
+  display: block;
+  height: 38px;
+  width: auto;
+  object-fit: contain;
 }
 .brand span {
-  font-size: 34px;
+  font-size: 32px;
   font-weight: 700;
   letter-spacing: 2px;
 }
-.brandCompact span {
-  font-size: 25px;
+.brandCompact .brandLogo {
+  height: 29px;
 }
-.brandCompact svg {
-  width: 31px;
-  height: 35px;
+.brandCompact span {
+  font-size: 22px;
+  letter-spacing: 1.6px;
 }
 .siteHeader {
   height: 80px;

@@ -1,11 +1,10 @@
 'use client';
 import { useMemo, useState } from 'react';
-import { ArrowUpDown, FileSpreadsheet } from 'lucide-react';
 import { CVD_TYPES, type CvdType } from '@/lib/pcci';
 import type { PcciPageRecord } from '../session';
 import styles from './dashboard.module.css';
 
-type SortCol = 'page' | CvdType | 'pairs';
+type SortCol = 'page' | CvdType;
 
 export function PdfSummaryTable({
   records,
@@ -47,12 +46,10 @@ export function PdfSummaryTable({
   const sortedRows = useMemo(() => {
     const indexed = records.map((rec, originalIndex) => ({ rec, originalIndex }));
     indexed.sort((a, b) => {
-      let diff = 0;
-      if (sortCol === 'page') diff = a.rec.pageNumber - b.rec.pageNumber;
-      else if (sortCol === 'pairs')
-        diff = a.rec.analysis.eligiblePairCount - b.rec.analysis.eligiblePairCount;
-      else
-        diff = a.rec.analysis.cvd[sortCol].pcciScore - b.rec.analysis.cvd[sortCol].pcciScore;
+      const diff =
+        sortCol === 'page'
+          ? a.rec.pageNumber - b.rec.pageNumber
+          : a.rec.analysis.cvd[sortCol].pcciScore - b.rec.analysis.cvd[sortCol].pcciScore;
       return sortDesc ? -diff : diff;
     });
     return indexed;
@@ -66,116 +63,75 @@ export function PdfSummaryTable({
     }
   };
 
-  if (totalDocPages <= 1 && records.length <= 1) return null;
-
   const isPartial = records.length < totalDocPages;
 
   return (
-    <section className={styles.panel} aria-labelledby="pdf-summary-heading">
-      <div className={styles.panelHeader}>
-        <div>
-          <h2 id="pdf-summary-heading">
-            <FileSpreadsheet size={18} aria-hidden="true" />
-            Page-Level PCCI Summary ({records.length} of {totalDocPages} pages analyzed)
-          </h2>
-          <p className={styles.sectionHint} style={{ marginTop: 4 }}>
-            {isPartial
-              ? `Partial-page selection (${records.length} of ${totalDocPages} pages). This is not a complete document assessment.`
-              : `All ${totalDocPages} document pages analyzed independently. Mean and maximum page risks are reported separately per CVD type.`}
-          </p>
-        </div>
-      </div>
-
-      <div className={styles.panelBody}>
-        <div className={styles.pdfSummaryGrid}>
-          {CVD_TYPES.map((cvd) => (
-            <div key={cvd} className={styles.pdfStatCard}>
-              <strong>{cvd}</strong>
-              <span>
-                Mean page risk: <strong>{summary[cvd].mean.toFixed(1)}</strong> / 100
-              </span>
-              <span>
-                Max page risk: <strong>{summary[cvd].max.toFixed(1)}</strong> / 100 (Page{' '}
-                {summary[cvd].maxPage})
-              </span>
-            </div>
+    <>
+      <div className={styles.inspectorSubHeader}>
+        <h2 id="pdf-summary-heading">
+          Pages ({records.length} of {totalDocPages} analyzed)
+        </h2>
+        <div className={styles.sortPills} role="group" aria-label="Sort pages">
+          {(
+            [
+              ['page', '#'],
+              ['Deuteranopia', 'D'],
+              ['Protanopia', 'P'],
+              ['Tritanopia', 'T'],
+            ] as Array<[SortCol, string]>
+          ).map(([col, short]) => (
+            <button
+              key={col}
+              type="button"
+              aria-pressed={sortCol === col}
+              title={`Sort by ${col}`}
+              onClick={() => toggleSort(col)}
+            >
+              {short}
+            </button>
           ))}
         </div>
-
-        <div className={styles.tableWrap}>
-          <table className={styles.pairTable}>
-            <thead>
-              <tr>
-                {(
-                  [
-                    ['page', 'Page'],
-                    ['Deuteranopia', 'Deuteranopia'],
-                    ['Protanopia', 'Protanopia'],
-                    ['Tritanopia', 'Tritanopia'],
-                    ['pairs', 'Eligible pairs'],
-                  ] as Array<[SortCol, string]>
-                ).map(([col, label]) => (
-                  <th key={col}>
-                    <button
-                      type="button"
-                      className="textLink"
-                      style={{
-                        minHeight: 28,
-                        padding: 0,
-                        fontSize: 11,
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 4,
-                        color: sortCol === col ? 'var(--blue)' : 'var(--muted)',
-                      }}
-                      onClick={() => toggleSort(col)}
-                    >
-                      {label}
-                      <ArrowUpDown size={12} aria-hidden="true" />
-                    </button>
-                  </th>
-                ))}
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedRows.map(({ rec, originalIndex }) => {
-                const active = originalIndex === activePageIndex;
-                return (
-                  <tr
-                    key={rec.pageNumber}
-                    className={`${styles.pairRowClickable} ${active ? styles.pairRowActive : ''}`}
-                    onClick={() => onSelectPageIndex(originalIndex)}
-                  >
-                    <td>
-                      <strong>Page {rec.pageNumber}</strong>
-                    </td>
-                    <td>{rec.analysis.cvd.Deuteranopia.pcciScore.toFixed(1)}</td>
-                    <td>{rec.analysis.cvd.Protanopia.pcciScore.toFixed(1)}</td>
-                    <td>{rec.analysis.cvd.Tritanopia.pcciScore.toFixed(1)}</td>
-                    <td>{rec.analysis.eligiblePairCount}</td>
-                    <td>{rec.analysis.status === 'ok' ? 'Scored' : 'No eligible pairs'}</td>
-                    <td>
-                      <button
-                        type="button"
-                        className="button"
-                        style={{ minHeight: 30, padding: '4px 10px', fontSize: 11 }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onSelectPageIndex(originalIndex);
-                        }}
-                      >
-                        {active ? 'Viewing' : 'Inspect page'}
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
       </div>
-    </section>
+
+      <p className="note" style={{ margin: 0, fontSize: 11.5 }}>
+        {isPartial
+          ? `Partial selection (${records.length}/${totalDocPages} pages). Not a complete document assessment.`
+          : `All ${totalDocPages} pages analyzed independently.`}
+      </p>
+
+      <div className={styles.pdfCompactSummary}>
+        {CVD_TYPES.map((cvd) => (
+          <div key={cvd} className={styles.pdfMiniStat}>
+            <strong>{cvd.slice(0, 4)}.</strong>
+            <span>Avg {summary[cvd].mean.toFixed(1)}</span>
+            <span>
+              Max {summary[cvd].max.toFixed(1)} (p.{summary[cvd].maxPage})
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className={styles.pairCardList}>
+        {sortedRows.map(({ rec, originalIndex }) => {
+          const active = originalIndex === activePageIndex;
+          return (
+            <button
+              key={rec.pageNumber}
+              type="button"
+              className={`${styles.pdfPageRow} ${active ? styles.pdfPageRowActive : ''}`}
+              aria-current={active ? 'page' : undefined}
+              onClick={() => onSelectPageIndex(originalIndex)}
+            >
+              <strong>Page {rec.pageNumber}</strong>
+              <span>
+                D {rec.analysis.cvd.Deuteranopia.pcciScore.toFixed(1)} · P{' '}
+                {rec.analysis.cvd.Protanopia.pcciScore.toFixed(1)} · T{' '}
+                {rec.analysis.cvd.Tritanopia.pcciScore.toFixed(1)}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </>
   );
 }

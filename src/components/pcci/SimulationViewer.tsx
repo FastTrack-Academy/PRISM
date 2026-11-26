@@ -21,7 +21,7 @@ export type SimulationCache = {
   simulations: Record<CvdType, Uint8ClampedArray>;
 };
 
-type ViewMode = 'four-up' | 'side-by-side';
+type ViewMode = 'side-by-side' | 'four-up';
 
 type OverlayStats = {
   pctA: number;
@@ -31,14 +31,11 @@ type OverlayStats = {
 
 /**
  * Draw a high-visibility, CVD-accessible cluster & proximity localization overlay:
- * - Optional spotlight shadow dims unselected background pixels so risk zones pop immediately.
- * - Multi-pixel thick double-halo contours (white outer halo + bold core stroke) stay crisp
- *   on both dark and light backgrounds and at any zoom scale.
- * - Vivid non-red/green-only encoding:
- *     Cluster A: Cobalt-cyan solid contour + -45° stripes
- *     Cluster B: Vivid magenta dashed contour + +45° stripes
- *     Spatial proximity (A near B): High-luminance gold-yellow fill + bold black/white double ring
- * - High-contrast pill badges ("A", "B") anchored on the largest visual concentration of each cluster.
+ * - Spotlight shadow dims unselected background pixels so risk zones pop immediately.
+ * - Thick double-halo contours (white outer halo + bold core stroke) stay crisp on dark & light images.
+ * - Cluster A: solid cobalt-cyan contour + -45° stripes + "A" badge
+ * - Cluster B: dashed vivid magenta contour + +45° stripes + "B" badge
+ * - Spatial proximity (A near B across PCCI offsets 2, 8, 16, 32 px): gold-yellow + 1px dark rim
  */
 function drawLocalizationOverlay(
   canvas: HTMLCanvasElement,
@@ -59,7 +56,6 @@ function drawLocalizationOverlay(
   const total = compW * compH;
   if (total === 0) return { pctA: 0, pctB: 0, pctProx: 0 };
 
-  // Classify every pixel: 0 = background, 1 = A, 2 = B, 3 = spatially proximate (A near B or B near A)
   const mask = new Uint8Array(total);
   const proxOffsets = [2, 8, 16, Math.min(32, spatialRadius * 2)];
   const dirs: Array<[number, number]> = [
@@ -90,7 +86,6 @@ function drawLocalizationOverlay(
   let countB = 0;
   let countProx = 0;
 
-  // Track coarse grid density (16x16 bins) to anchor A and B callout badges onto real regions
   const bins = 16;
   const binA = new Int32Array(bins * bins);
   const binB = new Int32Array(bins * bins);
@@ -124,7 +119,6 @@ function drawLocalizationOverlay(
     }
   }
 
-  // Build thickened border + outer halo detection using 2-pixel neighborhood
   const hasDiffWithin = (x: number, y: number, cls: number, r: number): boolean => {
     for (let dy = -r; dy <= r; dy++) {
       const ny = y + dy;
@@ -169,14 +163,12 @@ function drawLocalizationOverlay(
       const o = idx * 4;
 
       if (cls === 0) {
-        // Crisp white outer halo immediately around any highlighted region for contrast on dark backgrounds
         if (hasTargetWithin(x, y, 2)) {
           out[o] = 255;
           out[o + 1] = 255;
           out[o + 2] = 255;
           out[o + 3] = Math.min(245, Math.round(opacity * 245));
         } else if (dimAlpha > 0) {
-          // Spotlight shadow over non-selected areas
           out[o] = 10;
           out[o + 1] = 18;
           out[o + 2] = 36;
@@ -185,10 +177,7 @@ function drawLocalizationOverlay(
         continue;
       }
 
-      const isThickEdge = hasDiffWithin(x, y, cls, 2);
-
       if (cls === 3) {
-        // Spatially proximate zone: bright gold-yellow (#FFD400) with crisp 1px navy rim so even thin seams glow clearly
         const isThinEdge = hasDiffWithin(x, y, cls, 1);
         if (isThinEdge) {
           out[o] = 11;
@@ -202,7 +191,7 @@ function drawLocalizationOverlay(
           out[o + 3] = proxFillAlpha;
         }
       } else if (cls === 1) {
-        // Cluster A: vivid cobalt-cyan (#006EFF) bold solid outline + bold -45° stripes
+        const isThickEdge = hasDiffWithin(x, y, cls, 2);
         if (isThickEdge) {
           out[o] = 0;
           out[o + 1] = 98;
@@ -216,8 +205,8 @@ function drawLocalizationOverlay(
           out[o + 3] = stripe ? fillAlpha : Math.round(fillAlpha * 0.42);
         }
       } else {
-        // Cluster B: vivid magenta-rose (#E10E7C) bold dashed outline + bold +45° stripes
-        const dash = ((x + y) % 14) < 9;
+        const isThickEdge = hasDiffWithin(x, y, cls, 2);
+        const dash = (x + y) % 14 < 9;
         if (isThickEdge && dash) {
           out[o] = 216;
           out[o + 1] = 14;
@@ -236,7 +225,6 @@ function drawLocalizationOverlay(
 
   ctx.putImageData(img, 0, 0);
 
-  // Draw crisp high-contrast anchor pill badges ("A" and "B") at peak density regions
   const drawBadge = (binCounts: Int32Array, text: string, bg: string) => {
     let bestBin = -1;
     let bestVal = 0;
@@ -311,7 +299,8 @@ export function SimulationViewer({
   onShowOverlayChange: (show: boolean) => void;
   onSimCacheReady: (cache: SimulationCache | null) => void;
 }) {
-  const [viewMode, setViewMode] = useState<ViewMode>('four-up');
+  // Default to Side-by-Side (Original + Active CVD) so user sees localized overlay & simulation in one glance
+  const [viewMode, setViewMode] = useState<ViewMode>('side-by-side');
   const [zoom, setZoom] = useState(100);
   const [overlayOpacity, setOverlayOpacity] = useState(0.85);
   const [dimBackground, setDimBackground] = useState(true);
@@ -336,7 +325,6 @@ export function SimulationViewer({
   const pageNumber = result.pageNumber ?? 1;
   const bgMode = result.config.alphaCompositing;
 
-  // Render full-resolution original & all 3 CVD simulations in a Web Worker once per page
   useEffect(() => {
     let live = true;
     const worker = new Worker(new URL('../../workers/sim.worker.ts', import.meta.url));
@@ -407,7 +395,6 @@ export function SimulationViewer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doc, pageNumber, bgMode]);
 
-  // Paint canvases whenever cache, viewMode, or selectedCvd changes
   useEffect(() => {
     if (!cache) return;
     const paintRgb = (target: HTMLCanvasElement | null, buf: Uint8ClampedArray) => {
@@ -436,7 +423,6 @@ export function SimulationViewer({
     }
   }, [cache, viewMode, selectedCvd]);
 
-  // Paint risk localization overlay when active
   const activeClusterA =
     selectedClusterId !== null
       ? selectedClusterId
@@ -479,7 +465,6 @@ export function SimulationViewer({
     cache,
   ]);
 
-  // Synchronized scroll/pan in side-by-side mode
   const syncScroll = (source: 'left' | 'right') => {
     if (syncingRef.current) return;
     const from = source === 'left' ? leftScrollRef.current : rightScrollRef.current;
@@ -500,75 +485,61 @@ export function SimulationViewer({
   };
 
   return (
-    <section className={styles.panel} aria-labelledby="sim-viewer-heading">
-      <div className={styles.panelHeader}>
+    <section className={styles.viewerPanel} aria-labelledby="sim-viewer-heading">
+      <div className={styles.panelToolbar}>
         <h2 id="sim-viewer-heading">
-          <Eye size={18} aria-hidden="true" />
+          <Eye size={16} aria-hidden="true" />
           CVD Simulation Viewer
         </h2>
 
-        <div className={styles.viewerToolbar}>
+        <div className={styles.viewerToolbarRight}>
           <div className={styles.segmented} role="group" aria-label="Simulation layout">
-            <button
-              type="button"
-              aria-pressed={viewMode === 'four-up'}
-              onClick={() => setViewMode('four-up')}
-            >
-              <Grid2x2 size={14} aria-hidden="true" />
-              4-image comparison
-            </button>
             <button
               type="button"
               aria-pressed={viewMode === 'side-by-side'}
               onClick={() => setViewMode('side-by-side')}
             >
-              <Columns2 size={14} aria-hidden="true" />
+              <Columns2 size={13} aria-hidden="true" />
               Original vs {selectedCvd}
+            </button>
+            <button
+              type="button"
+              aria-pressed={viewMode === 'four-up'}
+              onClick={() => setViewMode('four-up')}
+            >
+              <Grid2x2 size={13} aria-hidden="true" />
+              4-image comparison
             </button>
           </div>
 
           {viewMode === 'side-by-side' && (
-            <>
-              <div className={styles.segmented} role="group" aria-label="Selected CVD simulation">
-                {CVD_TYPES.map((cvd) => (
-                  <button
-                    key={cvd}
-                    type="button"
-                    aria-pressed={selectedCvd === cvd}
-                    onClick={() => onSelectCvd(cvd)}
-                  >
-                    {cvd}
-                  </button>
-                ))}
-              </div>
-              <div className={styles.zoomGroup} role="group" aria-label="Zoom controls">
-                <button
-                  type="button"
-                  aria-label="Zoom out"
-                  disabled={zoom <= 50}
-                  onClick={() => setZoom((z) => Math.max(50, z - 25))}
-                >
-                  <Minus size={14} />
-                </button>
-                <span>{zoom}%</span>
-                <button
-                  type="button"
-                  aria-label="Zoom in"
-                  disabled={zoom >= 250}
-                  onClick={() => setZoom((z) => Math.min(250, z + 25))}
-                >
-                  <Plus size={14} />
-                </button>
-              </div>
-            </>
+            <div className={styles.zoomGroup} role="group" aria-label="Zoom controls">
+              <button
+                type="button"
+                aria-label="Zoom out"
+                disabled={zoom <= 50}
+                onClick={() => setZoom((z) => Math.max(50, z - 25))}
+              >
+                <Minus size={13} />
+              </button>
+              <span>{zoom}%</span>
+              <button
+                type="button"
+                aria-label="Zoom in"
+                disabled={zoom >= 250}
+                onClick={() => setZoom((z) => Math.min(250, z + 25))}
+              >
+                <Plus size={13} />
+              </button>
+            </div>
           )}
         </div>
       </div>
 
-      <div className={styles.panelBody}>
+      <div className={styles.viewerStageArea}>
         {busy && (
-          <div className={styles.statusNotice} role="status">
-            <LoaderCircle size={17} className={styles.spin} />
+          <div className={styles.statusNotice} role="status" style={{ margin: 'auto' }}>
+            <LoaderCircle size={16} className={styles.spin} />
             <span>Rendering full-resolution Machado (2009) &amp; Brettel (1997) simulations…</span>
           </div>
         )}
@@ -578,92 +549,14 @@ export function SimulationViewer({
           </p>
         )}
 
-        {!busy && !error && viewMode === 'four-up' && (
-          <div className={styles.fourUpGrid}>
-            <div className={styles.simCard}>
-              <div className={styles.simCardHead}>
-                <span>Original</span>
-                <span className="note">{showOverlay ? 'Localized overlay' : 'Reference'}</span>
-              </div>
-              <div className={styles.simCanvasWrap}>
-                <canvas
-                  ref={fourOrigRef}
-                  role="img"
-                  aria-label={`Original ${result.imageName}`}
-                />
-                {showOverlay && (
-                  <canvas
-                    ref={fourOverlayRef}
-                    className={styles.overlayCanvas}
-                    aria-label="Cluster localization overlay"
-                  />
-                )}
-              </div>
-              <div className={styles.simCardFoot}>
-                <span className={styles.simScoreValue}>Reference image</span>
-                <span className={styles.simScoreSub}>
-                  {result.originalDimensions.width} × {result.originalDimensions.height} px
-                </span>
-              </div>
-            </div>
-
-            {CVD_TYPES.map((cvd) => {
-              const score = result.cvd[cvd].pcciScore;
-              const band = getProvisionalRiskBand(score, result.status);
-              const active = selectedCvd === cvd;
-              return (
-                <div
-                  key={cvd}
-                  className={`${styles.simCard} ${active ? styles.simCardActive : ''}`}
-                >
-                  <div className={styles.simCardHead}>
-                    <span>{cvd}</span>
-                    <button
-                      type="button"
-                      className="textLink"
-                      style={{ minHeight: 24, padding: 0, fontSize: 11 }}
-                      onClick={() => onSelectCvd(cvd)}
-                    >
-                      {active ? 'Selected' : 'Inspect'}
-                    </button>
-                  </div>
-                  <div className={styles.simCanvasWrap}>
-                    <canvas
-                      ref={cvdRefs[cvd]}
-                      role="img"
-                      aria-label={`${cvd} full dichromacy simulation of ${result.imageName}`}
-                    />
-                  </div>
-                  <div className={styles.simCardFoot}>
-                    <span className={styles.simScoreValue}>{score.toFixed(1)} / 100</span>
-                    <div className={styles.riskBarTrack} aria-hidden="true">
-                      <div
-                        className={`${styles.riskBarFill} ${
-                          band.level === 'low'
-                            ? styles.barLow
-                            : band.level === 'moderate'
-                              ? styles.barModerate
-                              : band.level === 'elevated'
-                                ? styles.barElevated
-                                : styles.barHigh
-                        }`}
-                        style={{ width: `${Math.min(100, Math.max(0, score))}%` }}
-                      />
-                    </div>
-                    <span className={styles.simScoreSub}>{band.label}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
         {!busy && !error && viewMode === 'side-by-side' && (
           <div className={styles.sideBySideGrid}>
             <div className={styles.sidePane}>
               <div className={styles.simCardHead}>
                 <span>Original</span>
-                <span className="note">Synchronized pan &amp; zoom ({zoom}%)</span>
+                <span className="note">
+                  {showOverlay ? 'Localized overlay active' : `${result.originalDimensions.width} × ${result.originalDimensions.height} px`}
+                </span>
               </div>
               <div
                 ref={leftScrollRef}
@@ -715,87 +608,143 @@ export function SimulationViewer({
           </div>
         )}
 
-        {/* Risk localization controls & accessible legend (Section 7.F) */}
-        <div className={styles.localizationBar}>
-          <div className={styles.localizationTop}>
-            <label className={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={showOverlay}
-                disabled={activeClusterA === null}
-                onChange={(e) => onShowOverlayChange(e.target.checked)}
-              />
-              <Layers size={15} aria-hidden="true" />
-              Show risk localization overlay on original image
-            </label>
-
-            {showOverlay && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-                <label className={styles.checkboxLabel} style={{ fontSize: 12, fontWeight: 500 }}>
-                  <input
-                    type="checkbox"
-                    checked={dimBackground}
-                    onChange={(e) => setDimBackground(e.target.checked)}
-                  />
-                  <Sparkles size={14} aria-hidden="true" />
-                  Dim background (spotlight)
-                </label>
-                <label className={styles.opacityControl}>
-                  Overlay intensity ({Math.round(overlayOpacity * 100)}%)
-                  <input
-                    type="range"
-                    min={0.25}
-                    max={1}
-                    step={0.05}
-                    value={overlayOpacity}
-                    onChange={(e) => setOverlayOpacity(Number(e.target.value))}
-                  />
-                </label>
+        {!busy && !error && viewMode === 'four-up' && (
+          <div className={styles.fourUpGrid}>
+            <div className={styles.simCard}>
+              <div className={styles.simCardHead}>
+                <span>Original</span>
+                <span className="note">{showOverlay ? 'Localized' : 'Reference'}</span>
               </div>
-            )}
-          </div>
-
-          {showOverlay && activeClusterA !== null ? (
-            <>
-              <div className={styles.legendRow}>
-                <span className={styles.legendItem}>
-                  <span className={`${styles.legendChip} ${styles.legendA}`} />
-                  <strong>A</strong> · Cluster #{activeClusterA + 1} (
-                  {result.clusters[activeClusterA]?.hex})
-                  {overlayStats ? ` · ${overlayStats.pctA.toFixed(1)}%` : ''} — solid cobalt contour
-                </span>
-                {activeClusterB !== null && (
-                  <>
-                    <span className={styles.legendItem}>
-                      <span className={`${styles.legendChip} ${styles.legendB}`} />
-                      <strong>B</strong> · Cluster #{activeClusterB + 1} (
-                      {result.clusters[activeClusterB]?.hex})
-                      {overlayStats ? ` · ${overlayStats.pctB.toFixed(1)}%` : ''} — dashed magenta
-                      contour
-                    </span>
-                    <span className={styles.legendItem}>
-                      <span className={`${styles.legendChip} ${styles.legendProx}`} />
-                      <strong>Spatially proximate</strong>
-                      {overlayStats ? ` (${overlayStats.pctProx.toFixed(1)}% of image)` : ''} —
-                      gold highlight + navy halo where A &amp; B appear near each other
-                    </span>
-                  </>
+              <div className={styles.simCanvasWrap}>
+                <canvas
+                  ref={fourOrigRef}
+                  role="img"
+                  aria-label={`Original ${result.imageName}`}
+                />
+                {showOverlay && (
+                  <canvas
+                    ref={fourOverlayRef}
+                    className={styles.overlayCanvas}
+                    aria-label="Cluster localization overlay"
+                  />
                 )}
               </div>
-              <p className="note" style={{ margin: 0 }}>
-                Overlay distinguishes where selected colour clusters appear versus where they occur
-                in spatial proximity. These masks locate colour clusters only—they do not identify
-                semantic content or establish validated inaccessible regions.
-              </p>
-            </>
-          ) : (
-            <p className="note" style={{ margin: 0 }}>
-              {activeClusterA !== null
-                ? 'Enable the overlay (or click “Inspect” on any colour pair below) to spotlight where the selected colours appear and where they are spatially proximate.'
-                : 'Select a colour pair below or a palette cluster to inspect its spatial locations.'}
-            </p>
+              <div className={styles.simCardFoot}>
+                <span className={styles.simScoreValue}>Reference</span>
+                <span className={styles.simScoreSub}>
+                  {result.originalDimensions.width} × {result.originalDimensions.height} px
+                </span>
+              </div>
+            </div>
+
+            {CVD_TYPES.map((cvd) => {
+              const score = result.cvd[cvd].pcciScore;
+              const band = getProvisionalRiskBand(score, result.status);
+              const active = selectedCvd === cvd;
+              return (
+                <div
+                  key={cvd}
+                  className={`${styles.simCard} ${active ? styles.simCardActive : ''}`}
+                >
+                  <div className={styles.simCardHead}>
+                    <span>{cvd}</span>
+                    <button
+                      type="button"
+                      className="textLink"
+                      style={{ minHeight: 20, padding: 0, fontSize: 11 }}
+                      onClick={() => onSelectCvd(cvd)}
+                    >
+                      {active ? 'Selected' : 'Inspect'}
+                    </button>
+                  </div>
+                  <div className={styles.simCanvasWrap}>
+                    <canvas
+                      ref={cvdRefs[cvd]}
+                      role="img"
+                      aria-label={`${cvd} full dichromacy simulation of ${result.imageName}`}
+                    />
+                  </div>
+                  <div className={styles.simCardFoot}>
+                    <span className={styles.simScoreValue}>{score.toFixed(1)} / 100</span>
+                    <span className={styles.simScoreSub}>{band.shortLabel}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Risk localization controls pinned cleanly beneath the viewer */}
+      <div className={styles.localizationBar}>
+        <div className={styles.localizationTop}>
+          <label className={styles.checkboxLabel}>
+            <input
+              type="checkbox"
+              checked={showOverlay}
+              disabled={activeClusterA === null}
+              onChange={(e) => onShowOverlayChange(e.target.checked)}
+            />
+            <Layers size={14} aria-hidden="true" />
+            Show risk localization overlay
+          </label>
+
+          {showOverlay && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+              <label className={styles.checkboxLabel} style={{ fontSize: 11.5, fontWeight: 500 }}>
+                <input
+                  type="checkbox"
+                  checked={dimBackground}
+                  onChange={(e) => setDimBackground(e.target.checked)}
+                />
+                <Sparkles size={13} aria-hidden="true" />
+                Dim background
+              </label>
+              <label className={styles.opacityControl}>
+                Intensity ({Math.round(overlayOpacity * 100)}%)
+                <input
+                  type="range"
+                  min={0.25}
+                  max={1}
+                  step={0.05}
+                  value={overlayOpacity}
+                  onChange={(e) => setOverlayOpacity(Number(e.target.value))}
+                />
+              </label>
+            </div>
           )}
         </div>
+
+        {showOverlay && activeClusterA !== null ? (
+          <div className={styles.legendRow}>
+            <span className={styles.legendItem}>
+              <span className={`${styles.legendChip} ${styles.legendA}`} />
+              <strong>A</strong> ({result.clusters[activeClusterA]?.hex}
+              {overlayStats ? `, ${overlayStats.pctA.toFixed(1)}%` : ''})
+            </span>
+            {activeClusterB !== null && (
+              <>
+                <span className={styles.legendItem}>
+                  <span className={`${styles.legendChip} ${styles.legendB}`} />
+                  <strong>B</strong> ({result.clusters[activeClusterB]?.hex}
+                  {overlayStats ? `, ${overlayStats.pctB.toFixed(1)}%` : ''})
+                </span>
+                <span className={styles.legendItem}>
+                  <span className={`${styles.legendChip} ${styles.legendProx}`} />
+                  <strong>Proximate</strong>
+                  {overlayStats ? ` (${overlayStats.pctProx.toFixed(1)}%)` : ''}
+                </span>
+              </>
+            )}
+            <span className="note" style={{ fontSize: 10.5 }}>
+              · Colour cluster mask only (not semantic inaccessibility)
+            </span>
+          </div>
+        ) : (
+          <p className="note" style={{ margin: 0, fontSize: 11 }}>
+            Click any confusing colour pair on the right to spotlight where it appears on the image.
+          </p>
+        )}
       </div>
     </section>
   );

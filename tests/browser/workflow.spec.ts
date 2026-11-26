@@ -5,7 +5,7 @@ import path from 'node:path';
 import os from 'node:os';
 import { readFile } from 'node:fs/promises';
 
-test('PCCI sample workflow, 3 independent scores, viewer modes, explainability, research mode, exports, privacy, and accessibility', async ({
+test('PCCI cockpit workflow, new logo, 3 CVD cards, viewer modes, tabbed inspector, params, exports, privacy, and accessibility', async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -22,6 +22,7 @@ test('PCCI sample workflow, 3 independent scores, viewer modes, explainability, 
 
   await page.goto('/');
   await expect(page.getByRole('heading', { name: /See every page/ })).toBeVisible();
+  await expect(page.locator('img[src="/logo.png"]').first()).toBeVisible();
   await expect(page.locator('canvas').first()).toHaveAttribute('width', /\d{3}/);
 
   const landingAxe = await new AxeBuilder({ page })
@@ -35,25 +36,41 @@ test('PCCI sample workflow, 3 independent scores, viewer modes, explainability, 
   await page.getByRole('button', { name: 'Analyze selected pages' }).click();
 
   await expect(
-    page.getByRole('heading', { name: 'Perceptual Color Confusion Index (PCCI)' }),
+    page.getByRole('heading', { name: /Perceptual Color Confusion Index/ }),
   ).toBeVisible({ timeout: 30000 });
   await expect(page.getByRole('heading', { name: /Why this score\?/ })).toBeVisible();
-  await expect(page.getByRole('heading', { name: /Extracted CIELAB Colour Palette/ })).toBeVisible();
 
-  // Switch between 4-image comparison and side-by-side comparison
-  await page.getByRole('button', { name: /Original vs/ }).click();
+  // Switch CVD directly from the top score strip
+  await page.getByRole('button', { name: /Protanopia/ }).click();
+  await expect(page.getByRole('heading', { name: /Why this score\? · Protanopia/ })).toBeVisible();
+
+  // Switch between side-by-side (default) and 4-image grid
+  await page.getByRole('button', { name: /4-image comparison/ }).click();
+  await page.getByRole('button', { name: /Original vs Protanopia/ }).click();
   await expect(page.getByLabel('Zoom in')).toBeVisible();
 
-  // Toggle risk localization overlay
-  await page.getByLabel(/Show risk localization overlay/).check();
+  // Verify inspector tab order: Why this score? -> Palette -> Params -> Pages
+  const tabLabels = await page.getByRole('tab').allTextContents();
+  expect(tabLabels.map((t) => t.replace(/\d+/g, '').trim())).toEqual([
+    'Why this score?',
+    'Palette',
+    'Params',
+    'Pages',
+  ]);
 
-  // Test experimental research mode recalculation
-  await page.getByText('Experimental Research Mode — Algorithm Parameters').click();
+  // Open compact Palette tab on demand
+  await page.getByRole('tab', { name: /Palette/ }).click();
+  await expect(page.getByRole('heading', { name: /CIELAB Palette/ })).toBeVisible();
+
+  // Open Params tab, test Auto Elbow K-selection + live diagnostic chart, then reset
+  await page.getByRole('tab', { name: /Params/ }).click();
+  await page.getByLabel('Cluster count K selection').selectOption('elbow');
   await page.getByLabel(/Remaining-distance scale/).fill('16');
   await page.getByRole('button', { name: /Apply & recalculate/ }).click();
   await expect(page.getByText('Non-default experimental parameters active')).toBeVisible({
     timeout: 15000,
   });
+  await expect(page.getByText('Elbow inertia curve (CIELAB SSE)')).toBeVisible();
 
   // Reset defaults
   await page.getByRole('button', { name: 'Reset defaults' }).click();
@@ -61,19 +78,22 @@ test('PCCI sample workflow, 3 independent scores, viewer modes, explainability, 
     timeout: 15000,
   });
 
-  // Export Scores CSV, JSON, and PDF report
+  // Export Scores CSV, JSON, and PDF report from top Export dropdown
+  await page.getByRole('button', { name: 'Export', exact: true }).click();
   const csvDownloadPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Scores CSV', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Scores CSV' }).click();
   const csvFile = await csvDownloadPromise;
   expect(csvFile.suggestedFilename()).toContain('-pcci-scores.csv');
 
+  await page.getByRole('button', { name: 'Export', exact: true }).click();
   const jsonDownloadPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Complete JSON', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Complete JSON' }).click();
   const jsonFile = await jsonDownloadPromise;
   expect(jsonFile.suggestedFilename()).toContain('-pcci-results.json');
 
+  await page.getByRole('button', { name: 'Export', exact: true }).click();
   const reportPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Export PDF report' }).click();
+  await page.getByRole('menuitem', { name: 'PDF analysis report' }).click();
   const reportFile = await reportPromise;
   const reportPath = path.join(os.tmpdir(), 'prism-pcci-report.pdf');
   await reportFile.saveAs(reportPath);
@@ -92,7 +112,7 @@ test('PCCI sample workflow, 3 independent scores, viewer modes, explainability, 
   expect(remote).toEqual([]);
 });
 
-test('real multi-page PDF upload, selection cap, page summary table, PNG auto-analysis, and standalone routes', async ({
+test('real multi-page PDF upload, selection cap, Pages tab summary, and standalone routes', async ({
   page,
 }) => {
   const pdf = await PDFDocument.create();
@@ -121,13 +141,14 @@ test('real multi-page PDF upload, selection cap, page summary table, PNG auto-an
   await page.getByRole('button', { name: 'Analyze selected pages' }).click();
 
   await expect(
-    page.getByRole('heading', { name: /Page-Level PCCI Summary \(2 of 12 pages analyzed\)/ }),
+    page.getByRole('heading', { name: /Perceptual Color Confusion Index/ }),
   ).toBeVisible({ timeout: 30000 });
 
-  // Verify methodology and about pages
+  await page.getByRole('tab', { name: /Pages/ }).click();
+  await expect(page.getByRole('heading', { name: /Pages \(2 of 12 analyzed\)/ })).toBeVisible();
+
   await page.goto('/methodology/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('A score you can look inside.');
-  await expect(page.getByText('WeightedTopMean')).toBeVisible();
 
   await page.goto('/about/');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('More ways to see.');

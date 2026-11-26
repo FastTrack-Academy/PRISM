@@ -4,6 +4,7 @@ export * from './cvd';
 export * from './ciede2000';
 export * from './preprocess';
 export * from './kmeans';
+export * from './kselect';
 export * from './spatial';
 export * from './risk';
 export * from './analyze';

@@ -10,6 +10,7 @@ import {
   computePairwiseRisk,
   computeThumbnailDimensions,
   CVD_TYPES,
+  findElbowK,
   labToSrgb01,
   linearToSrgb,
   preprocessRgba,
@@ -340,4 +341,37 @@ test('synthetic image: very small images, <24 unique colours, transparent PNG co
   assert.deepEqual(computeThumbnailDimensions(556, 714, 640), { width: 498, height: 640 });
   assert.deepEqual(computeThumbnailDimensions(1024, 1376, 640), { width: 476, height: 640 });
   assert.deepEqual(computeThumbnailDimensions(1000, 980, 640), { width: 640, height: 627 });
+});
+
+test('adaptive K selection (Elbow and Silhouette) identifies clean clusters and records diagnostics', () => {
+  // Synthetic convex inertia curve with sharp elbow at K = 4
+  const elbowK = findElbowK([
+    { k: 2, inertia: 1000 },
+    { k: 3, inertia: 420 },
+    { k: 4, inertia: 60 },
+    { k: 6, inertia: 45 },
+    { k: 8, inertia: 40 },
+    { k: 12, inertia: 35 },
+  ]);
+  assert.equal(elbowK, 4);
+
+  // Clean 4-colour image: both Elbow and Silhouette should select compact K <= 6 and preserve red-green risk
+  const fourColor = makeVerticalStripes(120, 60, [
+    [190, 80, 74, 255],
+    [112, 136, 73, 255],
+    [25, 110, 200, 255],
+    [255, 255, 255, 255],
+  ]);
+
+  const elbowRes = analyzeImagePcci(fourColor, { kSelectionMode: 'elbow', k: 24 }).result;
+  assert.ok(elbowRes.kSelection && elbowRes.kSelection.mode === 'elbow');
+  assert.equal(elbowRes.kSelection.selectedK, elbowRes.clusterCount);
+  assert.ok(elbowRes.clusterCount >= 3 && elbowRes.clusterCount <= 4);
+  assert.ok(elbowRes.cvd.Deuteranopia.pcciScore > 40);
+
+  const silRes = analyzeImagePcci(fourColor, { kSelectionMode: 'silhouette', k: 24 }).result;
+  assert.ok(silRes.kSelection && silRes.kSelection.mode === 'silhouette');
+  assert.equal(silRes.kSelection.selectedK, silRes.clusterCount);
+  assert.ok(silRes.clusterCount >= 2 && silRes.clusterCount <= 4);
+  assert.ok(silRes.kSelection.candidates.length >= 2);
 });

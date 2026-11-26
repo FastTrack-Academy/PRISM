@@ -2,6 +2,7 @@ import { paletteDistanceMatrix } from './ciede2000';
 import { labToSrgb01, rgb01ToHex, rgbBufferToLabBuffer } from './colorspace';
 import { simulateRgb01 } from './cvd';
 import { fitMiniBatchKMeansLab } from './kmeans';
+import { selectOptimalKLab } from './kselect';
 import { preprocessRgba } from './preprocess';
 import { aggregateWeightedUpperTail, computePairwiseRisk } from './risk';
 import {
@@ -50,8 +51,23 @@ export function extractPcciFeatures(
   );
 
   const flatLab = rgbBufferToLabBuffer(prep.rgb);
+
+  let targetK = config.k;
+  let kSelection: PcciIntermediateFeatures['kSelection'];
+  if (config.kSelectionMode !== 'fixed') {
+    kSelection = selectOptimalKLab(flatLab, {
+      mode: config.kSelectionMode,
+      maxK: config.k,
+      maxSamples: config.maxSamples,
+      seed: config.seed,
+      nInit: config.nInit,
+      batchSize: config.batchSize,
+    });
+    targetK = kSelection.selectedK;
+  }
+
   const km = fitMiniBatchKMeansLab(flatLab, {
-    k: config.k,
+    k: targetK,
     maxSamples: config.maxSamples,
     seed: config.seed,
     nInit: config.nInit,
@@ -94,6 +110,7 @@ export function extractPcciFeatures(
     originalDimensions: { width: input.width, height: input.height },
     computationalDimensions: { width: prep.width, height: prep.height },
     k: km.k,
+    kSelection,
     clusters,
     labels: km.labels,
     d0,
@@ -314,6 +331,7 @@ export function scorePcciFromFeatures(
     status,
     statusMessage,
     clusterCount: k,
+    kSelection: features.kSelection,
     eligiblePairCount: weights.eligiblePairCount,
     clusters,
     cvd: cvdResults,
